@@ -15,8 +15,8 @@ export async function POST(req) {
 
         // Insert into the database
         const query = `
-            INSERT INTO Account (account_no, balance, status, created_at, cust_id, account_type)
-            VALUES (?, ?, 'pending', NOW(), ?, ?)
+            INSERT INTO Account (account_no, balance, status, cust_id, account_type)
+            VALUES (?, ?, 'pending', ?, ?)
         `;
         const values = [account_no, initial_balance, cust_id, account_type];
 

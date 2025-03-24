@@ -1,9 +1,20 @@
 import { pool } from "../../../lib/db";
 import { nanoid } from 'nanoid';
 
+
+function addMonthsToDate(startDate, months) {
+    let newDate = new Date(startDate);
+    newDate.setMonth(newDate.getMonth() + months); // Add months
+    return newDate;
+}
+
 export async function POST(req) {
     try {
-        const { borrower_id, principal_amount, interest, repayment_date } = await req.json();
+        const { borrower_id, principal_amount, interest, duration } = await req.json();
+
+        const startDate = new Date();
+        let repayment_date = addMonthsToDate(startDate,duration);
+        repayment_date = repayment_date.toISOString().slice(0, 19).replace("T", " ")
 
         // Validate input
         if (!borrower_id || !principal_amount || principal_amount <= 0 || interest < 0 || !repayment_date) {
@@ -12,7 +23,7 @@ export async function POST(req) {
 
         // Generate a unique loan ID
         const loan_id = `LOAN-${nanoid(10)}`;
-        const remaining_amount = principal_amount; // Initially, remaining amount = principal
+        const remaining_amount = principal_amount + (principal_amount * interest * duration) / 1200.00; // Initially, remaining amount = principal
 
         // Insert loan record into the database
         const query = `

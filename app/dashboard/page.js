@@ -1,63 +1,64 @@
 "use client";
 import { useRef,useState } from "react";
+import { ChartPie, UserRoundPlus, Landmark ,IndianRupee, HandCoins, PiggyBank, WalletMinimal, History} from 'lucide-react';
 
 
 const Dashboard = () => {
   const [activeForm, setActiveForm] = useState(null);
 
   return (
-    <div className="flex h-screen bg-gray-100 overflow-hidden">
+      <div className="flex h-screen bg-gray-100 overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-64 bg-gray-900 text-white p-6 flex-shrink-0">
-        <h2 className="text-2xl font-bold mb-6">Sierra Bank</h2>
-        <button
-          onClick={() => setActiveForm(null)}
-          className="w-full p-3 bg-gray-700 my-2 rounded hover:shadow-xl transition-shadow"
-        >
-          Dashboard
-        </button>
-        <button
-          onClick={() => setActiveForm("createAccount")}
-          className="w-full p-3 bg-blue-600 my-2 rounded hover:shadow-xl transition-shadow"
-        >
-          Create Account
-        </button>
-        <button
-          onClick={() => setActiveForm("takeLoan")}
-          className="w-full p-3 bg-blue-600 my-2 rounded hover:shadow-xl transition-shadow"
-        >
-          Take a Loan
-        </button>
-        <button
-          onClick={() => setActiveForm("transferMoney")}
-          className="w-full p-3 bg-blue-600 my-2 rounded hover:shadow-xl transition-shadow"
-        >
-          Transfer Money
-        </button>
-        <button
-          onClick={() => setActiveForm("withdraw")}
-          className="w-full p-3 bg-blue-600 my-2 rounded hover:shadow-xl transition-shadow"
-        >
-          Withdraw
-        </button>
-        <button
-          onClick={() => setActiveForm("repayLoan")}
-          className="w-full p-3 bg-blue-600 my-2 rounded hover:shadow-xl transition-shadow"
-        >
-          Repay Loan
-        </button>
-        <button
-          onClick={() => setActiveForm("viewBalance")}
-          className="w-full p-3 bg-blue-600 my-2 rounded hover:shadow-xl transition-shadow"
-        >
-          View Balance
-        </button>
-        <button
-          onClick={() => setActiveForm("viewTransactions")}
-          className="w-full p-3 bg-blue-600 my-2 rounded hover:shadow-xl transition-shadow"
-        >
-          View Transaction History
-        </button>
+      <aside className="w-90 bg-gray-900 text-white p-6 flex-shrink-0">
+        <div className="p-5 flex flex-col text-center"><h2 className="text-3xl font-bold mb-6">Sierra Bank</h2></div>
+  
+        <div className={`flex flex-col p-4 text-base font-normal rounded-lg 
+          ${activeForm === null ? "bg-blue-700 text-white" : "text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"}`}>
+				<button onClick={() => setActiveForm(null)} className="flex flex-row ml-5"> <ChartPie className="w-7 h-7  text-primary"/><div className="text-xl ml-2">Dashboard</div>
+        </button> 
+				</div>
+        
+        <div className={`flex flex-col  p-4 text-base font-normal rounded-lg 
+          ${activeForm === "createAccount" ? "bg-blue-700 text-white" : "text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"}`}>
+				<button onClick={() => setActiveForm("createAccount")} className="flex flex-row ml-5"> <UserRoundPlus className="w-7 h-7  text-primary"/><div className="text-xl ml-2">Create Account</div>
+        </button> 
+				</div>
+
+        <div className={`flex flex-col  p-4 text-base font-normal rounded-lg 
+          ${activeForm === "takeLoan" ? "bg-blue-700 text-white" : "text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"}`}>
+				<button onClick={() => setActiveForm("takeLoan")} className="flex flex-row ml-5"> <Landmark className="w-7 h-7  text-primary"/><div className="text-xl ml-2">Take a Loan</div>
+        </button> 
+				</div>
+
+        <div className={`flex flex-col  p-4 text-base font-normal rounded-lg 
+          ${activeForm === "transferMoney" ? "bg-blue-700 text-white" : "text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"}`}>
+				<button onClick={() => setActiveForm("transferMoney")} className="flex flex-row ml-5"> <IndianRupee className="w-7 h-7  text-primary"/><div className="text-xl ml-2">Transfer Money</div>
+        </button> 
+				</div>
+        
+        <div className={`flex flex-col p-4 text-base font-normal rounded-lg 
+          ${activeForm === "withdraw" ? "bg-blue-700 text-white" : "text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"}`}>
+				<button onClick={() => setActiveForm("withdraw")} className="flex flex-row ml-5"> <HandCoins className="w-7 h-7  text-primary"/><div className="text-xl ml-2">Withdraw</div>
+        </button> 
+				</div>
+
+        <div className={`flex flex-col  p-4 text-base font-normal rounded-lg 
+          ${activeForm === "repayLoan" ? "bg-blue-700 text-white" : "text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"}`}>
+				<button onClick={() => setActiveForm("repayLoan")} className="flex flex-row ml-5"> <PiggyBank  className="w-7 h-7  text-primary"/><div className="text-xl ml-2">Repay Loan</div>
+        </button> 
+				</div>
+
+        <div className={`flex flex-col  p-4 text-base font-normal rounded-lg 
+          ${activeForm === "viewBalance" ? "bg-blue-700 text-white" : "text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"}`}>
+				<button onClick={() => setActiveForm("viewBalance")} className="flex flex-row ml-5"> <WalletMinimal  className="w-7 h-7  text-primary"/><div className="text-xl ml-2">View Balance</div>
+        </button> 
+				</div>
+
+        <div className={`flex flex-col   p-4 text-base font-normal rounded-lg 
+          ${activeForm === "viewTransactions" ? "bg-blue-700 text-white" : "text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"}`}>
+				<button onClick={() => setActiveForm("viewTransactions")} className="flex flex-row ml-5"> <History  className="w-7 h-7  text-primary"/><div className="text-xl ml-2">View Transaction History</div>
+        </button> 
+				</div>
       </aside>
 
       {/* Main Content */}
@@ -75,8 +76,9 @@ const Dashboard = () => {
   );
 };
 const DashboardOverview = () => {
-  const [avatar, setAvatar] = useState("https://via.placeholder.com/80");
+  const [avatar, setAvatar] = useState("https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg");
   const fileInputRef = useRef(null);
+  
 
   const handleAvatarClick = () => {
     fileInputRef.current.click();
@@ -93,7 +95,7 @@ const DashboardOverview = () => {
   return (
     <div className="flex flex-col h-full gap-6 p-6 bg-gradient-to-r from-blue-50 to-indigo-100">
       {/* Top Section: Avatar & Welcome */}
-      <div className="flex-shrink-0 bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow flex items-center space-x-6 h-1/5 border-l-4 border-blue-500">
+      <div className="flex-shrink-0 bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow flex items-center space-x-6 h-1/5">
         <div className="relative">
           <img
             src={avatar}
@@ -110,19 +112,17 @@ const DashboardOverview = () => {
           />
         </div>
         <div>
-          <h3 className="text-2xl font-bold text-gray-800">Welcome back, Victor!</h3>
+          <h3 className="text-3xl font-bold text-gray-800">Welcome back, Victor!</h3>
           <p className="text-gray-600">Last login: 09/06/2016 05:34:59 PM PHT</p>
-          <p className="text-3xl font-bold text-blue-700 animate-pulse">
-            Total Balance: $17,288.29
-          </p>
-          <p className="text-sm text-gray-500">[Placeholder: Data from backend]</p>
+          
+          
         </div>
       </div>
 
       {/* Middle Section: Accounts and Expenses */}
       <div className="flex flex-grow gap-6">
         {/* All Accounts - Larger */}
-        <div className="flex-1 bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow border-l-4 border-green-500">
+        <div className="flex-1 bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
           <h3 className="text-lg font-bold mb-4 text-gray-800">All Accounts</h3>
           <table className="w-full border-collapse border border-gray-300">
             <thead>
@@ -151,7 +151,7 @@ const DashboardOverview = () => {
         </div>
 
         {/* Expenses Report - Chart */}
-        <div className="w-1/3 bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow border-l-4 border-purple-500">
+        <div className="w-1/3 bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
           <h3 className="text-lg font-bold mb-4 text-gray-800">Expenses Report</h3>
           <div className="h-48 flex items-center justify-center bg-indigo-50 rounded-lg">
             <p className="text-gray-500">[Placeholder: Expense graph from backend]</p>
@@ -162,7 +162,7 @@ const DashboardOverview = () => {
       {/* Bottom Section: Activities and Pending Bills - Side by Side */}
       <div className="flex gap-6">
         {/* All Activities */}
-        <div className="flex-1 bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow border-l-4 border-orange-500">
+        <div className="flex-1 bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow ">
           <h3 className="text-lg font-bold mb-4 text-gray-800">All Activities</h3>
           <ul className="list-disc list-inside text-sm text-gray-700">
             <li>Deposit of $500 credited to Checking</li>
@@ -173,7 +173,7 @@ const DashboardOverview = () => {
         </div>
 
         {/* Pending Bills */}
-        <div className="flex-1 bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow border-l-4 border-red-500">
+        <div className="flex-1 bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow ">
           <h3 className="text-lg font-bold mb-4 text-gray-800">Pending Bills</h3>
           <ul className="list-disc list-inside text-sm text-gray-700">
             <li>Electricity Bill: $150 due on 2025-04-05</li>
@@ -193,43 +193,103 @@ const CreateAccountForm = ({ setActiveForm }) => {
   const [branch, setBranch] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
 
-  return (
-    <div className="bg-white p-4 rounded-lg shadow">
-      <h3 className="text-lg font-bold mb-2">Create Account</h3>
-      <input type="text" placeholder="Full Name" className="w-full p-2 border mb-2" />
-      <select className="w-full p-2 border mb-2" onChange={(e) => setAccountType(e.target.value)}>
-        <option value="">Select Account Type</option>
-        <option value="savings">Savings</option>
-        <option value="current">Current</option>
-      </select>
-      <select className="w-full p-2 border mb-2" onChange={(e) => setBranch(e.target.value)}>
-        <option value="">Select Bank Branch</option>
-        <option value="branch1">Downtown Branch</option>
-        <option value="branch2">Uptown Branch</option>
-      </select>
-      <button onClick={() => setShowConfirmation(true)} className="bg-blue-600 text-white p-2 rounded">
-        Submit
-      </button>
+  const handleSubmit = () => {
+    setShowConfirmation(true);
+  };
 
+  const handleConfirm = () => {
+    setShowConfirmation(false);
+    setActiveForm(null);
+    // Call your account creation API here if needed
+  };
+
+  const handleCancel = () => {
+    setShowConfirmation(false);
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-400">
+      <div className="p-6 rounded-lg shadow-100xl max-w-md w-full bg-gradient-to-r from-blue-50 to-indigo-100">
+        <h3 className="text-2xl font-bold mb-4 text-gray-800">Create Account</h3>
+        
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Full Name"
+            className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
+        </div>
+        
+        <div className="mb-4">
+          <select
+            value={accountType}
+            onChange={(e) => setAccountType(e.target.value)}
+            className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+          >
+            <option value="">Select Account Type</option>
+            <option value="savings">Savings</option>
+            <option value="current">Current</option>
+          </select>
+        </div>
+        
+        <div className="mb-4">
+          <select
+            value={branch}
+            onChange={(e) => setBranch(e.target.value)}
+            className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+          >
+            <option value="">Select Bank Branch</option>
+            <option value="branch1">Downtown Branch</option>
+            <option value="branch2">Uptown Branch</option>
+          </select>
+        </div>
+        
+        <button
+          onClick={handleSubmit}
+          className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition-colors"
+        >
+          Submit
+        </button>
+      </div>
+
+      {/* Confirmation Modal */}
       {showConfirmation && (
-        <div className="mt-4 p-4 border rounded bg-gray-100">
-          <p>Are you sure you want to create a {accountType} account at {branch}?</p>
-          <button onClick={() => setActiveForm(null)} className="bg-green-600 text-white p-2 rounded mt-2">
-            Confirm
-          </button>
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-white bg-opacity-20 backdrop-blur-sm">
+          <div className="p-6 rounded-lg shadow-2xl max-w-sm w-full bg-white bg-opacity-80">
+            <p className="text-lg mb-4">
+              Are you sure you want to create a{" "}
+              <span className="font-bold">{accountType || "..."}</span> account at{" "}
+              <span className="font-bold">{branch || "..."}</span>?
+            </p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={handleCancel}
+                className="bg-gray-300 text-gray-800 p-2 rounded hover:bg-gray-400 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirm}
+                className="bg-green-600 text-white p-2 rounded hover:bg-green-700 transition-colors"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
   );
 };
 
-// Take Loan Form
+
 const TakeLoanForm = ({ setActiveForm }) => {
   const [loanType, setLoanType] = useState("");
   const [branch, setBranch] = useState("");
   const [loanAmount, setLoanAmount] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [loanId, setLoanId] = useState(null);
+  const [showApproval, setShowApproval] = useState(false);
 
   const loanOptions = [
     { type: "Agriculture", rate: "5%" },
@@ -248,55 +308,103 @@ const TakeLoanForm = ({ setActiveForm }) => {
 
   const confirmLoan = () => {
     setLoanId(Math.floor(Math.random() * 1000000));
-    setTimeout(() => setActiveForm(null), 2000);
+    setShowConfirmation(false);
+    setShowApproval(true);
+    // After 2 seconds, close the approval modal and clear the form.
+    setTimeout(() => {
+      setShowApproval(false);
+      setActiveForm(null);
+    }, 2000);
   };
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow">
-      <h3 className="text-lg font-bold mb-2">Take a Loan</h3>
-      <input
-        type="number"
-        placeholder="Loan Amount"
-        className="w-full p-2 border mb-2"
-        value={loanAmount}
-        onChange={(e) => setLoanAmount(e.target.value)}
-      />
-      <select className="w-full p-2 border mb-2" onChange={(e) => setLoanType(e.target.value)}>
-        <option value="">Select Loan Type</option>
-        {loanOptions.map((loan, index) => (
-          <option key={index} value={loan.type}>
-            {loan.type} ({loan.rate} interest)
-          </option>
-        ))}
-      </select>
-      <select className="w-full p-2 border mb-2" onChange={(e) => setBranch(e.target.value)}>
-        <option value="">Select Bank Branch</option>
-        <option value="branch1">Downtown Branch</option>
-        <option value="branch2">Uptown Branch</option>
-      </select>
-      <button onClick={handleSubmit} className="bg-blue-600 text-white p-2 rounded">
-        Apply
-      </button>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-100">
+      <div className="p-6 rounded-lg shadow-2xl max-w-md w-full bg-gradient-to-r from-blue-50 to-indigo-100">
+        <h3 className="text-2xl font-bold mb-4 text-gray-800">Take a Loan</h3>
+        <div className="mb-4">
+          <input
+            type="number"
+            placeholder="Loan Amount"
+            className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+            value={loanAmount}
+            onChange={(e) => setLoanAmount(e.target.value)}
+          />
+        </div>
+        <div className="mb-4">
+          <select
+            value={loanType}
+            onChange={(e) => setLoanType(e.target.value)}
+            className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+          >
+            <option value="">Select Loan Type</option>
+            {loanOptions.map((loan, index) => (
+              <option key={index} value={loan.type}>
+                {loan.type} ({loan.rate} interest)
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="mb-4">
+          <select
+            value={branch}
+            onChange={(e) => setBranch(e.target.value)}
+            className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+          >
+            <option value="">Select Bank Branch</option>
+            <option value="branch1">Downtown Branch</option>
+            <option value="branch2">Uptown Branch</option>
+          </select>
+        </div>
+        <button
+          onClick={handleSubmit}
+          className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition-colors"
+        >
+          Apply
+        </button>
+      </div>
+
+      {/* Confirmation Modal */}
       {showConfirmation && (
-        <div className="mt-4 p-4 border rounded bg-gray-100">
-          <p>
-            Are you sure you want a {loanType} loan of ${loanAmount} at {branch}?
-          </p>
-          <button onClick={confirmLoan} className="bg-green-600 text-white p-2 rounded mt-2">
-            Confirm
-          </button>
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-white bg-opacity-20 backdrop-blur-sm">
+          <div className="p-6 rounded-lg shadow-2xl max-w-sm w-full bg-white bg-opacity-80">
+            <p className="text-lg mb-4">
+              Are you sure you want a{" "}
+              <span className="font-bold">{loanType || "..."}</span> loan of $
+              {loanAmount} at <span className="font-bold">{branch || "..."}</span>?
+            </p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setShowConfirmation(false)}
+                className="bg-gray-300 text-gray-800 p-2 rounded hover:bg-gray-400 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmLoan}
+                className="bg-green-600 text-white p-2 rounded hover:bg-green-700 transition-colors"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
         </div>
       )}
-      {loanId && (
-        <div className="mt-4 p-4 border rounded bg-green-100">
-          <p>Your loan has been approved! Loan ID: {loanId}</p>
+
+      {/* Approval Modal */}
+      {showApproval && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-white bg-opacity-20 backdrop-blur-sm">
+          <div className="p-6 rounded-lg shadow-2xl max-w-sm w-full bg-white bg-opacity-80">
+            <p className="text-lg mb-4">
+              Your loan has been approved! Loan ID: <span className="font-bold">{loanId}</span>
+            </p>
+          </div>
         </div>
       )}
     </div>
   );
 };
 
-// Transfer Money Form
+
 const TransferMoneyForm = ({ setActiveForm }) => {
   const [userAccounts] = useState([
     { id: "acc1", name: "Checking - 1267451****" },
@@ -323,62 +431,98 @@ const TransferMoneyForm = ({ setActiveForm }) => {
   };
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow">
-      <h3 className="text-lg font-bold mb-2">Transfer Money</h3>
-      <select className="w-full p-2 border mb-2" value={selectedAccount} onChange={(e) => setSelectedAccount(e.target.value)}>
-        <option value="">Select Your Account</option>
-        {userAccounts.map((account) => (
-          <option key={account.id} value={account.id}>
-            {account.name}
-          </option>
-        ))}
-      </select>
-      <input
-        type="text"
-        placeholder="Recipient Name"
-        className="w-full p-2 border mb-2"
-        value={recipientName}
-        onChange={(e) => setRecipientName(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="Recipient Bank Account ID"
-        className="w-full p-2 border mb-2"
-        value={recipientAccountId}
-        onChange={(e) => setRecipientAccountId(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="What For?"
-        className="w-full p-2 border mb-2"
-        value={purpose}
-        onChange={(e) => setPurpose(e.target.value)}
-      />
-      <input
-        type="number"
-        placeholder="Amount"
-        className="w-full p-2 border mb-2"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-      />
-      <button onClick={handleTransfer} className="bg-blue-600 text-white p-2 rounded">
-        Transfer
-      </button>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-100">
+      <div className="p-6 rounded-lg shadow-2xl max-w-md w-full bg-gradient-to-r from-blue-50 to-indigo-100">
+        <h3 className="text-2xl font-bold mb-4 text-gray-800">Transfer Money</h3>
+        <div className="mb-4">
+          <select
+            className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+            value={selectedAccount}
+            onChange={(e) => setSelectedAccount(e.target.value)}
+          >
+            <option value="">Select Your Account</option>
+            {userAccounts.map((account) => (
+              <option key={account.id} value={account.id}>
+                {account.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Recipient Name"
+            className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+            value={recipientName}
+            onChange={(e) => setRecipientName(e.target.value)}
+          />
+        </div>
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Recipient Bank Account ID"
+            className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+            value={recipientAccountId}
+            onChange={(e) => setRecipientAccountId(e.target.value)}
+          />
+        </div>
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="What For?"
+            className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+            value={purpose}
+            onChange={(e) => setPurpose(e.target.value)}
+          />
+        </div>
+        <div className="mb-4">
+          <input
+            type="number"
+            placeholder="Amount"
+            className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+          />
+        </div>
+        <button
+          onClick={handleTransfer}
+          className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition-colors"
+        >
+          Transfer
+        </button>
+      </div>
+
+      {/* Confirmation Modal */}
       {showConfirmation && (
-        <div className="mt-4 p-4 border rounded bg-gray-100">
-          <p>
-            Confirm transfer of ${amount} to {recipientName} ({recipientAccountId}) for {purpose}?
-          </p>
-          <button onClick={confirmTransfer} className="bg-green-600 text-white p-2 rounded mt-2">
-            Confirm
-          </button>
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-white bg-opacity-20 backdrop-blur-sm">
+          <div className="p-6 rounded-lg shadow-2xl max-w-sm w-full bg-white bg-opacity-80">
+            <p className="text-lg mb-4">
+              Confirm transfer of ${amount} to {recipientName} (
+              {recipientAccountId}) for {purpose}?
+            </p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setShowConfirmation(false)}
+                className="bg-gray-300 text-gray-800 p-2 rounded hover:bg-gray-400 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmTransfer}
+                className="bg-green-600 text-white p-2 rounded hover:bg-green-700 transition-colors"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
   );
 };
 
-// Withdraw Form
+
+
 const WithdrawForm = ({ setActiveForm }) => {
   const [accountNumber, setAccountNumber] = useState("");
   const [amount, setAmount] = useState("");
@@ -394,51 +538,83 @@ const WithdrawForm = ({ setActiveForm }) => {
   const confirmWithdraw = () => {
     const slipId = Math.floor(Math.random() * 1000000);
     setWithdrawSlipId(slipId);
+    setShowConfirmation(false);
     setTimeout(() => {
       setActiveForm(null);
     }, 2000);
   };
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow">
-      <h3 className="text-lg font-bold mb-2">Withdraw</h3>
-      <input
-        type="text"
-        placeholder="Account Number"
-        className="w-full p-2 border mb-2"
-        value={accountNumber}
-        onChange={(e) => setAccountNumber(e.target.value)}
-      />
-      <input
-        type="number"
-        placeholder="Amount"
-        className="w-full p-2 border mb-2"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-      />
-      <button onClick={handleWithdraw} className="bg-blue-600 text-white p-2 rounded">
-        Withdraw
-      </button>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-100">
+      <div className="p-6 rounded-lg shadow-2xl max-w-md w-full bg-gradient-to-r from-blue-50 to-indigo-100">
+        <h3 className="text-2xl font-bold mb-4 text-gray-800">Withdraw</h3>
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Account Number"
+            className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+            value={accountNumber}
+            onChange={(e) => setAccountNumber(e.target.value)}
+          />
+        </div>
+        <div className="mb-4">
+          <input
+            type="number"
+            placeholder="Amount"
+            className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+          />
+        </div>
+        <button
+          onClick={handleWithdraw}
+          className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition-colors"
+        >
+          Withdraw
+        </button>
+      </div>
+
+      {/* Confirmation Modal */}
       {showConfirmation && (
-        <div className="mt-4 p-4 border rounded bg-gray-100">
-          <p>
-            Confirm withdrawal of ${amount} from account {accountNumber}?
-          </p>
-          <button onClick={confirmWithdraw} className="bg-green-600 text-white p-2 rounded mt-2">
-            Confirm
-          </button>
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-white bg-opacity-20 backdrop-blur-sm">
+          <div className="p-6 rounded-lg shadow-2xl max-w-sm w-full bg-white bg-opacity-80">
+            <p className="text-lg mb-4">
+              Confirm withdrawal of ${amount} from account {accountNumber}?
+            </p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setShowConfirmation(false)}
+                className="bg-gray-300 text-gray-800 p-2 rounded hover:bg-gray-400 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmWithdraw}
+                className="bg-green-600 text-white p-2 rounded hover:bg-green-700 transition-colors"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
         </div>
       )}
+
+      {/* Approval Modal */}
       {withdrawSlipId && (
-        <div className="mt-4 p-4 border rounded bg-green-100">
-          <p>Your withdrawal has been processed! Withdrawal Slip ID: {withdrawSlipId}</p>
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-white bg-opacity-20 backdrop-blur-sm">
+          <div className="p-6 rounded-lg shadow-2xl max-w-sm w-full bg-white bg-opacity-80">
+            <p className="text-lg">
+              Your withdrawal has been processed! Withdrawal Slip ID:{" "}
+              <span className="font-bold">{withdrawSlipId}</span>
+            </p>
+          </div>
         </div>
       )}
     </div>
   );
 };
 
-// Repay Loan Form
+
 const RepayLoanForm = ({ setActiveForm }) => {
   const [loanId, setLoanId] = useState("");
   const [validated, setValidated] = useState(false);
@@ -468,75 +644,113 @@ const RepayLoanForm = ({ setActiveForm }) => {
   const confirmRepayment = () => {
     const slipId = Math.floor(Math.random() * 1000000);
     setRepaymentSlipId(slipId);
+    setShowConfirmation(false);
     setTimeout(() => {
       setActiveForm(null);
     }, 2000);
   };
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow">
-      <h3 className="text-lg font-bold mb-2">Repay Loan</h3>
-      {!validated && (
-        <>
-          <input
-            type="text"
-            placeholder="Enter Loan ID"
-            className="w-full p-2 border mb-2"
-            value={loanId}
-            onChange={(e) => setLoanId(e.target.value)}
-          />
-          <button onClick={validateLoanId} className="bg-blue-600 text-white p-2 rounded">
-            Validate Loan ID
-          </button>
-        </>
-      )}
-      {validated && loanDetails && (
-        <div className="mt-4">
-          <p>Pending Amount: ${loanDetails.pendingAmount}</p>
-          <p>Due Date: {loanDetails.dueDate}</p>
-          <input
-            type="text"
-            placeholder="Account Number for Repayment"
-            className="w-full p-2 border mb-2"
-            value={accountNumber}
-            onChange={(e) => setAccountNumber(e.target.value)}
-          />
-          <input
-            type="number"
-            placeholder="Repayment Amount"
-            className="w-full p-2 border mb-2"
-            value={repayAmount}
-            onChange={(e) => setRepayAmount(e.target.value)}
-          />
-          <button onClick={handleRepayment} className="bg-blue-600 text-white p-2 rounded">
-            Submit Repayment
-          </button>
-        </div>
-      )}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-100">
+      <div className="p-6 rounded-lg shadow-2xl max-w-md w-full bg-gradient-to-r from-blue-50 to-indigo-100">
+        <h3 className="text-2xl font-bold mb-4 text-gray-800">Repay Loan</h3>
+        {!validated && (
+          <>
+            <div className="mb-4">
+              <input
+                type="text"
+                placeholder="Enter Loan ID"
+                className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+                value={loanId}
+                onChange={(e) => setLoanId(e.target.value)}
+              />
+            </div>
+            <button
+              onClick={validateLoanId}
+              className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition-colors"
+            >
+              Validate Loan ID
+            </button>
+          </>
+        )}
+        {validated && loanDetails && (
+          <div className="mt-4">
+            <p className="mb-2 text-gray-700">Pending Amount: ${loanDetails.pendingAmount}</p>
+            <p className="mb-4 text-gray-700">Due Date: {loanDetails.dueDate}</p>
+            <div className="mb-4">
+              <input
+                type="text"
+                placeholder="Account Number for Repayment"
+                className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+                value={accountNumber}
+                onChange={(e) => setAccountNumber(e.target.value)}
+              />
+            </div>
+            <div className="mb-4">
+              <input
+                type="number"
+                placeholder="Repayment Amount"
+                className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+                value={repayAmount}
+                onChange={(e) => setRepayAmount(e.target.value)}
+              />
+            </div>
+            <button
+              onClick={handleRepayment}
+              className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition-colors"
+            >
+              Submit Repayment
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Confirmation Modal */}
       {showConfirmation && (
-        <div className="mt-4 p-4 border rounded bg-gray-100">
-          <p>
-            Confirm repayment of ${repayAmount} from account {accountNumber} for loan {loanId}?
-          </p>
-          <button onClick={confirmRepayment} className="bg-green-600 text-white p-2 rounded mt-2">
-            Confirm
-          </button>
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-white bg-opacity-20 backdrop-blur-sm">
+          <div className="p-6 rounded-lg shadow-2xl max-w-sm w-full bg-white bg-opacity-80">
+            <p className="text-lg mb-4">
+              Confirm repayment of ${repayAmount} from account {accountNumber} for loan {loanId}?
+            </p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setShowConfirmation(false)}
+                className="bg-gray-300 text-gray-800 p-2 rounded hover:bg-gray-400 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmRepayment}
+                className="bg-green-600 text-white p-2 rounded hover:bg-green-700 transition-colors"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
         </div>
       )}
+
+      {/* Approval Modal */}
       {repaymentSlipId && (
-        <div className="mt-4 p-4 border rounded bg-green-100">
-          <p>Repayment successful! Repayment Slip ID: {repaymentSlipId}</p>
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-white bg-opacity-20 backdrop-blur-sm">
+          <div className="p-6 rounded-lg shadow-2xl max-w-sm w-full bg-white bg-opacity-80">
+            <p className="text-lg">
+              Repayment successful! Repayment Slip ID:{" "}
+              <span className="font-bold">{repaymentSlipId}</span>
+            </p>
+          </div>
         </div>
       )}
     </div>
   );
 };
 
+
 const ViewBalanceForm = ({ setActiveForm }) => {
   // Simulated account balances
   const accounts = [
     { id: "all", type: "All Accounts", balance: 17288.29 },
-    { id: "acc1", type: "Checking", account: "1267451****", balance: 10500.00, currency: "USD" },
+    { id: "acc1", type: "Checking", account: "1267451****", balance: 10500.0, currency: "USD" },
     { id: "acc2", type: "Savings", account: "5719371****", balance: 6788.29, currency: "USD" }
   ];
 
@@ -546,39 +760,42 @@ const ViewBalanceForm = ({ setActiveForm }) => {
   const selectedAccount = accounts.find((acc) => acc.id === selectedAccountId);
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow">
-      <h3 className="text-lg font-bold mb-2">View Balance</h3>
-      <select
-        className="w-full p-2 border mb-4"
-        value={selectedAccountId}
-        onChange={(e) => setSelectedAccountId(e.target.value)}
-      >
-        {accounts.map((acc) => (
-          <option key={acc.id} value={acc.id}>
-            {acc.type} {acc.account ? `- ${acc.account}` : ""}
-          </option>
-        ))}
-      </select>
-      {selectedAccountId === "all" ? (
-        <p className="text-2xl font-bold text-blue-600">
-          Total Balance: ${selectedAccount.balance.toFixed(2)}
-        </p>
-      ) : (
-        <div>
-          <h4 className="font-bold">{selectedAccount.type} Account Balance:</h4>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-100">
+      <div className="p-6 rounded-lg shadow-2xl max-w-md w-full bg-gradient-to-r from-blue-50 to-indigo-100">
+        <h3 className="text-2xl font-bold mb-4 text-gray-800">View Balance</h3>
+        <select
+          className="w-full p-3 border rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-600"
+          value={selectedAccountId}
+          onChange={(e) => setSelectedAccountId(e.target.value)}
+        >
+          {accounts.map((acc) => (
+            <option key={acc.id} value={acc.id}>
+              {acc.type} {acc.account ? `- ${acc.account}` : ""}
+            </option>
+          ))}
+        </select>
+        {selectedAccountId === "all" ? (
           <p className="text-2xl font-bold text-blue-600">
-            ${selectedAccount.balance.toFixed(2)} {selectedAccount.currency}
+            Total Balance: ${selectedAccount.balance.toFixed(2)}
           </p>
-        </div>
-      )}
-      <button onClick={() => setActiveForm(null)} className="mt-4 bg-blue-600 text-white p-2 rounded">
-        Back to Dashboard
-      </button>
+        ) : (
+          <div>
+            <h4 className="font-bold mb-2 text-gray-800">{selectedAccount.type} Account Balance:</h4>
+            <p className="text-2xl font-bold text-blue-600">
+              ${selectedAccount.balance.toFixed(2)} {selectedAccount.currency}
+            </p>
+          </div>
+        )}
+        <button
+          onClick={() => setActiveForm(null)}
+          className="mt-4 w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition-colors"
+        >
+          Back to Dashboard
+        </button>
+      </div>
     </div>
   );
 };
-
-// View Transaction History Form
 const ViewTransactionHistoryForm = ({ setActiveForm }) => {
   // Simulated transactions with account ids (acc1 for Checking, acc2 for Savings)
   const allTransactions = [
@@ -603,46 +820,53 @@ const ViewTransactionHistoryForm = ({ setActiveForm }) => {
       : allTransactions.filter((tx) => tx.accountId === selectedAccountId);
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow">
-      <h3 className="text-lg font-bold mb-2">Transaction History</h3>
-      <select
-        className="w-full p-2 border mb-4"
-        value={selectedAccountId}
-        onChange={(e) => setSelectedAccountId(e.target.value)}
-      >
-        {accounts.map((acc) => (
-          <option key={acc.id} value={acc.id}>
-            {acc.type} {acc.account ? `- ${acc.account}` : ""}
-          </option>
-        ))}
-      </select>
-      {transactions.length > 0 ? (
-        <table className="w-full border-collapse border border-gray-300">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="border border-gray-300 p-2">ID</th>
-              <th className="border border-gray-300 p-2">Date</th>
-              <th className="border border-gray-300 p-2">Description</th>
-              <th className="border border-gray-300 p-2">Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.map((tx) => (
-              <tr key={tx.id}>
-                <td className="border border-gray-300 p-2">{tx.id}</td>
-                <td className="border border-gray-300 p-2">{tx.date}</td>
-                <td className="border border-gray-300 p-2">{tx.description}</td>
-                <td className="border border-gray-300 p-2">{tx.amount}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <p>No transactions found for this account.</p>
-      )}
-      <button onClick={() => setActiveForm(null)} className="mt-4 bg-blue-600 text-white p-2 rounded">
-        Back to Dashboard
-      </button>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-100">
+      <div className="p-6 rounded-lg shadow-2xl max-w-lg w-full bg-gradient-to-r from-blue-50 to-indigo-100">
+        <h3 className="text-2xl font-bold mb-4 text-gray-800">Transaction History</h3>
+        <select
+          className="w-full p-3 border rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-600"
+          value={selectedAccountId}
+          onChange={(e) => setSelectedAccountId(e.target.value)}
+        >
+          {accounts.map((acc) => (
+            <option key={acc.id} value={acc.id}>
+              {acc.type} {acc.account ? `- ${acc.account}` : ""}
+            </option>
+          ))}
+        </select>
+        {transactions.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="min-w-full border-collapse border border-gray-300">
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="border border-gray-300 p-2 text-left">ID</th>
+                  <th className="border border-gray-300 p-2 text-left">Date</th>
+                  <th className="border border-gray-300 p-2 text-left">Description</th>
+                  <th className="border border-gray-300 p-2 text-left">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {transactions.map((tx) => (
+                  <tr key={tx.id} className="hover:bg-gray-100 transition">
+                    <td className="border border-gray-300 p-2">{tx.id}</td>
+                    <td className="border border-gray-300 p-2">{tx.date}</td>
+                    <td className="border border-gray-300 p-2">{tx.description}</td>
+                    <td className="border border-gray-300 p-2">{tx.amount}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="text-gray-700">No transactions found for this account.</p>
+        )}
+        <button
+          onClick={() => setActiveForm(null)}
+          className="mt-4 w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition-colors"
+        >
+          Back to Dashboard
+        </button>
+      </div>
     </div>
   );
 };

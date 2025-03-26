@@ -1,6 +1,6 @@
 "use client";
 import { useRef,useState } from "react";
-import { ChartPie, UserRoundPlus, Landmark ,IndianRupee, HandCoins, PiggyBank, WalletMinimal, History} from 'lucide-react';
+import { ChartPie, UserRoundPlus, Landmark ,IndianRupee, HandCoins, PiggyBank, WalletMinimal, History, Ticket, User, Send, ReceiptIcon, ReceiptText} from 'lucide-react';
 
 
 const Dashboard = () => {
@@ -10,7 +10,7 @@ const Dashboard = () => {
       <div className="flex h-screen bg-gray-100 overflow-hidden">
       {/* Sidebar */}
       <aside className="w-90 bg-gray-900 text-white p-6 flex-shrink-0">
-        <div className="p-5 flex flex-col text-center"><h2 className="text-3xl font-bold mb-6">Sierra Bank</h2></div>
+        <div className="p-5 flex flex-col text-center"><h2 className="text-3xl font-bold mb-6">NITC Bank</h2></div>
   
         <div className={`flex flex-col p-4 text-base font-normal rounded-lg 
           ${activeForm === null ? "bg-blue-700 text-white" : "text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"}`}>
@@ -92,8 +92,71 @@ const DashboardOverview = () => {
     }
   };
 
+  const activities = [
+    {
+      id: 1,
+      icon: <IndianRupee className="w-5 h-5 text-white" />,
+      bgColor: "bg-green-500",
+      text: "Deposit of $500 credited to ",
+      highlight: "Checking",
+      date: "28-12-2018 12:34 PM",
+    },
+    {
+      id: 2,
+      icon: <IndianRupee className="w-5 h-5 text-white" />,
+      bgColor: "bg-red-500",
+      text: "Withdrawal of $200 debited from ",
+      highlight: "Savings",
+      date: "26-11-2018 08:47 PM",
+    },
+    {
+      id: 3,
+      icon: <Send className="w-5 h-5 text-white" />,
+      bgColor: "bg-blue-600",
+      text: "Transfer of $300 from Checking to Savings",
+      highlight: "",
+      date: "24-11-2018 11:13 PM",
+    },
+    {
+      id: 4,
+      icon: <PiggyBank className="w-5 h-5 text-white" />,
+      bgColor: "bg-yellow-500",
+      text: "Repayment of Loan ",
+      highlight: "#123456",
+      date: "31-12-2017 09:22 AM",
+    },
+  ];
+
+  const bills = [
+    {
+      id: 1,
+      icon: <ReceiptText className="w-5 h-5 text-white" />,
+      bgColor: "bg-gray-600",
+      text: "Electricity Bill: ",
+      highlight: "$150 due on 2025-04-05",
+      date: "28-12-2018 12:34 PM",
+    },
+    {
+      id: 2,
+      icon: <ReceiptText className="w-5 h-5 text-white" />,
+      bgColor: "bg-gray-600",
+      text: "Internet:  ",
+      highlight: "$60 due on 2025-04-15",
+      date: "26-11-2018 08:47 PM",
+    },
+    {
+      id: 3,
+      icon: <ReceiptText className="w-5 h-5 text-white" />,
+      bgColor: "bg-gray-600",
+      text: "Water Bill: ",
+      highlight: "$75 due on 2025-04-10",
+      date: "24-11-2018 11:13 PM",
+    },
+  ];
+
   return (
-    <div className="flex flex-col h-full gap-6 p-6 bg-gradient-to-r from-blue-50 to-indigo-100">
+    
+    <div className="flex flex-col overflow-y-auto h-full gap-6 p-6 bg-gradient-to-r from-blue-50 to-indigo-100">
       {/* Top Section: Avatar & Welcome */}
       <div className="flex-shrink-0 bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow flex items-center space-x-6 h-1/5">
         <div className="relative">
@@ -121,40 +184,105 @@ const DashboardOverview = () => {
 
       {/* Middle Section: Accounts and Expenses */}
       <div className="flex flex-grow gap-6">
+        
         {/* All Accounts - Larger */}
         <div className="flex-1 bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
+          
           <h3 className="text-lg font-bold mb-4 text-gray-800">All Accounts</h3>
-          <table className="w-full border-collapse border border-gray-300">
+          <div className="relative overflow-x-auto shadow-md rounded-lg" ><table className="w-full  text-left">
             <thead>
               <tr className="bg-indigo-100">
-                <th className="border border-gray-300 p-3">Type</th>
-                <th className="border border-gray-300 p-3">Account Name</th>
-                <th className="border border-gray-300 p-3">Status</th>
-                <th className="border border-gray-300 p-3">Currency</th>
+                <th className=" p-3">Type</th>
+                <th className=" p-3">Account Name</th>
+                <th className=" p-3">Status</th>
+                <th className=" p-3">Currency</th>
               </tr>
             </thead>
             <tbody>
-              <tr className="hover:bg-gray-100 transition">
-                <td className="border border-gray-300 p-3">Checking</td>
-                <td className="border border-gray-300 p-3">1267451**** - WOLFE</td>
-                <td className="border border-gray-300 p-3 text-green-600">Active</td>
-                <td className="border border-gray-300 p-3">USD</td>
+              <tr className="border-b border-gray-300 hover:bg-gray-100 transition">
+                <td className=" p-3">Checking</td>
+                <td className=" p-3">1267451**** - WOLFE</td>
+                <td className=" p-3 text-green-600">Active</td>
+                <td className=" p-3">USD</td>
               </tr>
-              <tr className="hover:bg-gray-100 transition">
-                <td className="border border-gray-300 p-3">Savings</td>
-                <td className="border border-gray-300 p-3">5719371**** - MAENGUNE</td>
-                <td className="border border-gray-300 p-3 text-green-600">Active</td>
-                <td className="border border-gray-300 p-3">USD</td>
+              <tr className=" hover:bg-gray-100 transition">
+                <td className=" p-3">Savings</td>
+                <td className=" p-3">5719371**** - MAENGUNE</td>
+                <td className=" p-3 text-green-600">Active</td>
+                <td className=" p-3">USD</td>
               </tr>
             </tbody>
           </table>
+          </div>
+          
         </div>
 
         {/* Expenses Report - Chart */}
         <div className="w-1/3 bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
           <h3 className="text-lg font-bold mb-4 text-gray-800">Expenses Report</h3>
           <div className="h-48 flex items-center justify-center bg-indigo-50 rounded-lg">
-            <p className="text-gray-500">[Placeholder: Expense graph from backend]</p>
+            
+<div class="max-w-sm w-full bg-white rounded-lg shadow-sm dark:bg-gray-800 p-4 md:p-6">
+  <div class="flex justify-between">
+    <div>
+      <h5 class="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">32.4k</h5>
+      <p class="text-base font-normal text-gray-500 dark:text-gray-400">Users this week</p>
+    </div>
+    <div
+      class="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-500 dark:text-green-500 text-center">
+      12%
+      <svg class="w-3 h-3 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13V1m0 0L1 5m4-4 4 4"/>
+      </svg>
+    </div>
+  </div>
+  <div id="area-chart"></div>
+  <div class="grid grid-cols-1 items-center border-gray-200 border-t dark:border-gray-700 justify-between">
+    <div class="flex justify-between items-center pt-5">
+      
+      <button
+        id="dropdownDefaultButton"
+        data-dropdown-toggle="lastDaysdropdown"
+        data-dropdown-placement="bottom"
+        class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 text-center inline-flex items-center dark:hover:text-white"
+        type="button">
+        Last 7 days
+        <svg class="w-2.5 m-2.5 ms-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+        </svg>
+      </button>
+      
+      <div id="lastDaysdropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700">
+          <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+            <li>
+              <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Yesterday</a>
+            </li>
+            <li>
+              <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Today</a>
+            </li>
+            <li>
+              <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Last 7 days</a>
+            </li>
+            <li>
+              <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Last 30 days</a>
+            </li>
+            <li>
+              <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Last 90 days</a>
+            </li>
+          </ul>
+      </div>
+      <a
+        href="#"
+        class="uppercase text-sm font-semibold inline-flex items-center rounded-lg text-blue-600 hover:text-blue-700 dark:hover:text-blue-500  hover:bg-gray-100 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 px-3 py-2">
+        Users Report
+        <svg class="w-2.5 h-2.5 ms-1.5 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</div>
+
           </div>
         </div>
       </div>
@@ -163,23 +291,73 @@ const DashboardOverview = () => {
       <div className="flex gap-6">
         {/* All Activities */}
         <div className="flex-1 bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow ">
-          <h3 className="text-lg font-bold mb-4 text-gray-800">All Activities</h3>
-          <ul className="list-disc list-inside text-sm text-gray-700">
-            <li>Deposit of $500 credited to Checking</li>
-            <li>Withdrawal of $200 debited from Savings</li>
-            <li>Transfer of $300 from Checking to Savings</li>
-            <li>Repayment of Loan #123456</li>
-          </ul>
+          {/* Header */}
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-bold text-gray-800">Recent Activity</h3>
+        <a href="#" className="text-blue-500 text-sm hover:underline">
+          View All
+        </a>
+      </div>
+
+      {/* Activity List */}
+      <ul className="mt-4 space-y-4">
+        {activities.map((activity) => (
+          <li key={activity.id} className="flex items-start gap-4">
+            {/* Icon */}
+            <div
+              className={`w-10 h-10 flex items-center justify-center rounded-full ${activity.bgColor}`}
+            >
+              {activity.icon}
+            </div>
+
+            {/* Text Content */}
+            <div className="text-gray-700 text-sm">
+              <span>{activity.text}</span>
+              <span className="text-blue-500 font-semibold cursor-pointer">
+                {activity.highlight}
+              </span>
+              <p className="text-xs text-gray-500">{activity.date}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
         </div>
 
         {/* Pending Bills */}
+
+        
         <div className="flex-1 bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow ">
-          <h3 className="text-lg font-bold mb-4 text-gray-800">Pending Bills</h3>
-          <ul className="list-disc list-inside text-sm text-gray-700">
-            <li>Electricity Bill: $150 due on 2025-04-05</li>
-            <li>Water Bill: $75 due on 2025-04-10</li>
-            <li>Internet: $60 due on 2025-04-15</li>
-          </ul>
+           {/* Header */}
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-bold text-gray-800">Pending Bills</h3>
+        <a href="#" className="text-blue-500 text-sm hover:underline">
+          View All
+        </a>
+      </div>
+
+      {/* Bills List */}
+      <ul className="mt-4 space-y-4">
+        {bills.map((bills) => (
+          <li key={bills.id} className="flex items-start gap-4">
+            {/* Icon */}
+            <div
+              className={`w-10 h-10 flex items-center justify-center rounded-full ${bills.bgColor}`}
+            >
+              {bills.icon}
+            </div>
+
+            {/* Text Content */}
+            <div className="text-gray-700 text-sm">
+              <span>{bills.text}</span>
+              <span className="text-blue-500 font-semibold cursor-pointer">
+                {bills.highlight}
+              </span>
+              <p className="text-xs text-gray-500">{bills.date}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+          
         </div>
       </div>
     </div>
@@ -208,8 +386,8 @@ const CreateAccountForm = ({ setActiveForm }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-400">
-      <div className="p-6 rounded-lg shadow-100xl max-w-md w-full bg-gradient-to-r from-blue-50 to-indigo-100">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-100">
+      <div className="p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow max-w-md w-full bg-white">
         <h3 className="text-2xl font-bold mb-4 text-gray-800">Create Account</h3>
         
         <div className="mb-4">
@@ -319,7 +497,7 @@ const TakeLoanForm = ({ setActiveForm }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-100">
-      <div className="p-6 rounded-lg shadow-2xl max-w-md w-full bg-gradient-to-r from-blue-50 to-indigo-100">
+      <div className="p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow max-w-md w-full bg-white">
         <h3 className="text-2xl font-bold mb-4 text-gray-800">Take a Loan</h3>
         <div className="mb-4">
           <input
@@ -432,7 +610,7 @@ const TransferMoneyForm = ({ setActiveForm }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-100">
-      <div className="p-6 rounded-lg shadow-2xl max-w-md w-full bg-gradient-to-r from-blue-50 to-indigo-100">
+      <div className="p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow max-w-md w-full bg-white">
         <h3 className="text-2xl font-bold mb-4 text-gray-800">Transfer Money</h3>
         <div className="mb-4">
           <select
@@ -546,7 +724,7 @@ const WithdrawForm = ({ setActiveForm }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-100">
-      <div className="p-6 rounded-lg shadow-2xl max-w-md w-full bg-gradient-to-r from-blue-50 to-indigo-100">
+      <div className="p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow max-w-md w-full bg-white">
         <h3 className="text-2xl font-bold mb-4 text-gray-800">Withdraw</h3>
         <div className="mb-4">
           <input
@@ -652,7 +830,7 @@ const RepayLoanForm = ({ setActiveForm }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-100">
-      <div className="p-6 rounded-lg shadow-2xl max-w-md w-full bg-gradient-to-r from-blue-50 to-indigo-100">
+      <div className="p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow max-w-md w-full bg-white">
         <h3 className="text-2xl font-bold mb-4 text-gray-800">Repay Loan</h3>
         {!validated && (
           <>
@@ -761,7 +939,7 @@ const ViewBalanceForm = ({ setActiveForm }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-100">
-      <div className="p-6 rounded-lg shadow-2xl max-w-md w-full bg-gradient-to-r from-blue-50 to-indigo-100">
+      <div className="p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow max-w-md w-full bg-white">
         <h3 className="text-2xl font-bold mb-4 text-gray-800">View Balance</h3>
         <select
           className="w-full p-3 border rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -821,7 +999,7 @@ const ViewTransactionHistoryForm = ({ setActiveForm }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-100">
-      <div className="p-6 rounded-lg shadow-2xl max-w-lg w-full bg-gradient-to-r from-blue-50 to-indigo-100">
+      <div className="p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow max-w-md w-full bg-white">
         <h3 className="text-2xl font-bold mb-4 text-gray-800">Transaction History</h3>
         <select
           className="w-full p-3 border rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-600"

@@ -15,12 +15,16 @@ export async function POST(req) {
 
             // Check if account belongs to customer
             const [account] = await connection.execute(
-                "SELECT balance FROM Account WHERE account_no = ? AND cust_id = ? FOR UPDATE",
+                "SELECT status,balance FROM Account WHERE account_no = ? AND cust_id = ? FOR UPDATE",
                 [acc_no, cust_id]
             );
 
             if (account.length === 0) {
                 throw new Error("Account not found or does not belong to the customer");
+            }
+
+            if (account[0].status !== "active") {
+                return Response.json({ error: "Cannot withdraw from an inactive account" }, { status: 401 });
             }
 
             if (account[0].balance < amount) {

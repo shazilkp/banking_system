@@ -13,14 +13,32 @@ export async function POST(req) {
         try {
             await connection.beginTransaction();
 
+            const [receiver_account] = await pool.execute(
+                "SELECT status FROM Account WHERE account_no = ?",
+                [receiver_acc_no]
+            );
+
+
+            if (receiver_account.length === 0) {
+                return Response.json({ error: "Reciever account not found" }, { status: 404 });
+            }
+
+            if (receiver_account[0].status !== "active") {
+                return Response.json({ error: "Cannot transfer to an inactive account" }, { status: 401 });
+            }
+
             // Check sender balance
             const [sender] = await connection.execute(
-                "SELECT balance FROM Account WHERE account_no = ? FOR UPDATE",
+                "SELECT status, balance FROM Account WHERE account_no = ? FOR UPDATE",
                 [sender_acc_no]
             );
 
             if (sender.length === 0) {
                 throw new Error("Sender account not found");
+            }
+
+            if (sender.status !== "active") {
+                return Response.json({ error: "Cannot transfer from an inactive account" }, { status: 401 });
             }
 
             if (sender[0].balance < amount) {

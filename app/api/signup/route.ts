@@ -7,7 +7,8 @@ console.log("🔥 Signup API hit!"); // If this doesn’t show up, the request i
 
 // Define validation schema for signup
 const signupSchema = z.object({
-  userId: z.string().min(2, "Name must be at least 2 characters"),
+  userId: z.string().min(2, "UserID must be at least 2 characters"),
+  name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
 })
@@ -44,7 +45,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Validation failed", details: result.error.format() }, { status: 400 })
     }
 
-    const { userId, email, password } = result.data;
+    const { userId,name, email, password } = result.data;
 
     const [existingUser] = await pool.query("SELECT user_id FROM users WHERE user_id = ?", [userId]);
     
@@ -63,6 +64,11 @@ export async function POST(request: Request) {
     const [insertResult] = await pool.query(
       "INSERT INTO users (user_id, email, pass_hash) VALUES (?, ?, ?)",
       [userId, email, passwordHash]
+    );
+
+    const [custInsertResult] = await pool.query(
+      "INSERT INTO customer (cust_id,customer_name) VALUES (?,?)",
+      [userId,name]
     );
 
     // Return success response (without password)

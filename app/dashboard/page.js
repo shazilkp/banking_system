@@ -13,49 +13,49 @@ const Dashboard = () => {
         <div className="p-5 flex flex-col text-center"><h2 className="text-3xl font-bold mb-6">NITC Bank</h2></div>
   
         <div className={`flex flex-col p-4 text-base font-normal rounded-lg 
-          ${activeForm === null ? "bg-blue-700 text-white" : "text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"}`}>
+          ${activeForm === null ? "bg-blue-700 text-white" : "text-gray-900 text-white hover:bg-gray-100 hover:bg-gray-700"}`}>
 				<button onClick={() => setActiveForm(null)} className="flex flex-row ml-5"> <ChartPie className="w-7 h-7  text-primary"/><div className="text-xl ml-2">Dashboard</div>
         </button> 
 				</div>
         
         <div className={`flex flex-col  p-4 text-base font-normal rounded-lg 
-          ${activeForm === "createAccount" ? "bg-blue-700 text-white" : "text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"}`}>
+          ${activeForm === "createAccount" ? "bg-blue-700 text-white" : "text-gray-900 text-white hover:bg-gray-100 hover:bg-gray-700"}`}>
 				<button onClick={() => setActiveForm("createAccount")} className="flex flex-row ml-5"> <UserRoundPlus className="w-7 h-7  text-primary"/><div className="text-xl ml-2">Create Account</div>
         </button> 
 				</div>
 
         <div className={`flex flex-col  p-4 text-base font-normal rounded-lg 
-          ${activeForm === "takeLoan" ? "bg-blue-700 text-white" : "text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"}`}>
+          ${activeForm === "takeLoan" ? "bg-blue-700 text-white" : "text-gray-900 text-white hover:bg-gray-100 hover:bg-gray-700"}`}>
 				<button onClick={() => setActiveForm("takeLoan")} className="flex flex-row ml-5"> <Landmark className="w-7 h-7  text-primary"/><div className="text-xl ml-2">Take a Loan</div>
         </button> 
 				</div>
 
         <div className={`flex flex-col  p-4 text-base font-normal rounded-lg 
-          ${activeForm === "transferMoney" ? "bg-blue-700 text-white" : "text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"}`}>
+          ${activeForm === "transferMoney" ? "bg-blue-700 text-white" : "text-gray-900 text-white hover:bg-gray-100 hover:bg-gray-700"}`}>
 				<button onClick={() => setActiveForm("transferMoney")} className="flex flex-row ml-5"> <IndianRupee className="w-7 h-7  text-primary"/><div className="text-xl ml-2">Transfer Money</div>
         </button> 
 				</div>
         
         <div className={`flex flex-col p-4 text-base font-normal rounded-lg 
-          ${activeForm === "withdraw" ? "bg-blue-700 text-white" : "text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"}`}>
+          ${activeForm === "withdraw" ? "bg-blue-700 text-white" : "text-gray-900 text-white hover:bg-gray-100 hover:bg-gray-700"}`}>
 				<button onClick={() => setActiveForm("withdraw")} className="flex flex-row ml-5"> <HandCoins className="w-7 h-7  text-primary"/><div className="text-xl ml-2">Withdraw</div>
         </button> 
 				</div>
 
         <div className={`flex flex-col  p-4 text-base font-normal rounded-lg 
-          ${activeForm === "repayLoan" ? "bg-blue-700 text-white" : "text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"}`}>
+          ${activeForm === "repayLoan" ? "bg-blue-700 text-white" : "text-gray-900 text-white hover:bg-gray-100 hover:bg-gray-700"}`}>
 				<button onClick={() => setActiveForm("repayLoan")} className="flex flex-row ml-5"> <PiggyBank  className="w-7 h-7  text-primary"/><div className="text-xl ml-2">Repay Loan</div>
         </button> 
 				</div>
 
         <div className={`flex flex-col  p-4 text-base font-normal rounded-lg 
-          ${activeForm === "viewBalance" ? "bg-blue-700 text-white" : "text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"}`}>
+          ${activeForm === "viewBalance" ? "bg-blue-700 text-white" : "text-gray-900 text-white hover:bg-gray-100 hover:bg-gray-700"}`}>
 				<button onClick={() => setActiveForm("viewBalance")} className="flex flex-row ml-5"> <WalletMinimal  className="w-7 h-7  text-primary"/><div className="text-xl ml-2">View Balance</div>
         </button> 
 				</div>
 
         <div className={`flex flex-col   p-4 text-base font-normal rounded-lg 
-          ${activeForm === "viewTransactions" ? "bg-blue-700 text-white" : "text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"}`}>
+          ${activeForm === "viewTransactions" ? "bg-blue-700 text-white" : "text-gray-900 text-white hover:bg-gray-100 hover:bg-gray-700"}`}>
 				<button onClick={() => setActiveForm("viewTransactions")} className="flex flex-row ml-5"> <History  className="w-7 h-7  text-primary"/><div className="text-xl ml-2">View Transaction History</div>
         </button> 
 				</div>

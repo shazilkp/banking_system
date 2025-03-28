@@ -64,22 +64,32 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
     }
 
+    const [adminCheck] = await pool.query("SELECT * FROM Admin WHERE admin_id = ?", [userId]);
+    const admins = adminCheck as any[];
+
+    let roles = "customer"; // Default role
+
+    if(admins.length > 0){
+      roles = "admin"
+    }
+
+    console.log(roles);
     // Generate JWT token
     const token = jwt.sign(
-      { userId: user.user_id, email: user.email },
+      { userId: user.user_id, email: user.email, role: roles },
       process.env.JWT_SECRET || "fallback_secret_for_development_only",
       { expiresIn: "7d" },
     )
 
     // Set HTTP-only cookie with the token
-    cookies().set({
-      name: "auth_token",
-      value: token,
+
+    cookies().set("auth_token", token, {
       httpOnly: true,
       path: "/",
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 60 * 24 * 7, // 7 days
-    })
+    });
+    
 
     // Return user info (without password)
     const { passwordHash, ...userWithoutPassword } = user

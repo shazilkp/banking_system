@@ -1,10 +1,38 @@
 "use client";
-import { useRef,useState } from "react";
-import { ChartPie, UserRoundPlus, Landmark ,IndianRupee, HandCoins, PiggyBank, WalletMinimal, History, Ticket, User, Send, ReceiptIcon, ReceiptText} from 'lucide-react';
 
+import { useRef,useState,useEffect } from "react";
+import { ChartPie, UserRoundPlus, Landmark ,IndianRupee, HandCoins, PiggyBank, WalletMinimal, History} from 'lucide-react';
+import { decodeJwt } from "jose";
 
 const Dashboard = () => {
   const [activeForm, setActiveForm] = useState(null);
+  const [userId,setUserId] = useState(null);
+
+  useEffect(() => {
+
+    const fetchUserId = async () => {
+      try {
+          const response = await fetch("/api/auth/", {
+              method: "GET",
+              credentials: "include", // Ensure cookies are sent
+          });
+  
+          if (!response.ok) {
+              throw new Error("Unauthorized");
+          }
+  
+          const data = await response.json();
+          setUserId(data.userId);
+          return data.userId;
+      } catch (error) {
+          console.error("Error fetching user ID:", error);
+          return null;
+      }
+  };
+
+  // Usage
+  const userID =fetchUserId();
+  },[])
 
   return (
       <div className="flex h-screen bg-gray-100 overflow-hidden">
@@ -64,17 +92,18 @@ const Dashboard = () => {
       {/* Main Content */}
       <main className="flex-1 overflow-hidden">
         {activeForm === null && <DashboardOverview />}
-        {activeForm === "createAccount" && <CreateAccountForm setActiveForm={setActiveForm} />}
-        {activeForm === "takeLoan" && <TakeLoanForm setActiveForm={setActiveForm} />}
+        {activeForm === "createAccount" && <CreateAccountForm setActiveForm={setActiveForm} userId={userId} />}
+        {activeForm === "takeLoan" && <TakeLoanForm setActiveForm={setActiveForm} userId={userId} />}
         {activeForm === "transferMoney" && <TransferMoneyForm setActiveForm={setActiveForm} />}
         {activeForm === "withdraw" && <WithdrawForm setActiveForm={setActiveForm} />}
         {activeForm === "repayLoan" && <RepayLoanForm setActiveForm={setActiveForm} />}
         {activeForm === "viewBalance" && <ViewBalanceForm setActiveForm={setActiveForm} />}
-        {activeForm === "viewTransactions" && <ViewTransactionHistoryForm setActiveForm={setActiveForm} />}
+        {activeForm === "viewTransactions" && <ViewTransactionHistoryForm setActiveForm={setActiveForm} userId={userId} />}
       </main>
     </div>
   );
 };
+
 const DashboardOverview = () => {
   const [avatar, setAvatar] = useState("https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg");
   const fileInputRef = useRef(null);
@@ -366,7 +395,7 @@ const DashboardOverview = () => {
 
 
 // Create Account Form
-const CreateAccountForm = ({ setActiveForm }) => {
+const CreateAccountForm = ({ setActiveForm,userId }) => {
   const [accountType, setAccountType] = useState("");
   const [branch, setBranch] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -461,7 +490,7 @@ const CreateAccountForm = ({ setActiveForm }) => {
 };
 
 
-const TakeLoanForm = ({ setActiveForm }) => {
+const TakeLoanForm = ({ setActiveForm, userId }) => {
   const [loanType, setLoanType] = useState("");
   const [branch, setBranch] = useState("");
   const [loanAmount, setLoanAmount] = useState("");
@@ -583,7 +612,7 @@ const TakeLoanForm = ({ setActiveForm }) => {
 };
 
 
-const TransferMoneyForm = ({ setActiveForm }) => {
+const TransferMoneyForm = ({ setActiveForm , userId }) => {
   const [userAccounts] = useState([
     { id: "acc1", name: "Checking - 1267451****" },
     { id: "acc2", name: "Savings - 5719371****" }
@@ -701,7 +730,7 @@ const TransferMoneyForm = ({ setActiveForm }) => {
 
 
 
-const WithdrawForm = ({ setActiveForm }) => {
+const WithdrawForm = ({ setActiveForm,userId }) => {
   const [accountNumber, setAccountNumber] = useState("");
   const [amount, setAmount] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -974,8 +1003,13 @@ const ViewBalanceForm = ({ setActiveForm }) => {
     </div>
   );
 };
-const ViewTransactionHistoryForm = ({ setActiveForm }) => {
+const ViewTransactionHistoryForm = ({ setActiveForm,userId }) => {
   // Simulated transactions with account ids (acc1 for Checking, acc2 for Savings)
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [accounts,setAccounts] = useState([]);
+
   const allTransactions = [
     { id: 1, accountId: "acc1", date: "2025-03-01", description: "Deposit", amount: 500 },
     { id: 2, accountId: "acc2", date: "2025-03-05", description: "Withdrawal", amount: -200 },
@@ -983,20 +1017,131 @@ const ViewTransactionHistoryForm = ({ setActiveForm }) => {
     { id: 4, accountId: "acc2", date: "2025-03-12", description: "Deposit", amount: 700 }
   ];
 
-  const accounts = [
-    { id: "all", type: "All Accounts" },
-    { id: "acc1", type: "Checking", account: "1267451****" },
-    { id: "acc2", type: "Savings", account: "5719371****" }
-  ];
+  async function fetchAccountsByCustomerId(custId) {
+    try {
+        const response = await fetch(`/api/accounts/user/${custId}`);
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch accounts: ${response.statusText}`);
+        }
+
+        const accounts = await response.json(); // Expected to be an array
+       // console.log(accounts);
+        return accounts; // [{ accountId: "123" }, { accountId: "456" }]
+    } catch (error) {
+        console.error("Error fetching accounts:", error);
+        return [];
+    }
+}
+
+async function fetchTransactionsForAccount(accountId) {
+  try {
+      const response = await fetch(`/api/transfers/${accountId}`);
+
+      if (!response.ok) {
+          throw new Error(`Failed to fetch transactions for account ${accountId}: ${response.statusText}`);
+      }
+
+      const response_json = await response.json();
+      const transactions = response_json.transactions;
+      console.log(transactions.length);
+      console.log(response_json);
+      return transactions;
+  } catch (error) {
+      console.error("Error fetching transactions:", error);
+      return [];
+  }
+}
+
+async function fetchCustomerTransactions(custId) {
+  const response = await fetchAccountsByCustomerId(custId);
+  const accounts = response.accounts;
+
+  if (accounts.length === 0) {
+      console.log("No accounts found for this customer.");
+      return [];
+  }
+  const account_no = accounts[0].account_no;
+  //console.log(account_no);
+  const transactions = await fetchTransactionsForAccount(account_no);
+  return transactions;
+}
+
+async function fetchCustomerTransactions(custId) {
+  const response = await fetchAccountsByCustomerId(custId);
+  const accounts = response.accounts; // Ensure response is structured correctly
+
+  if (!accounts || accounts.length === 0) {
+    console.log("No accounts found for this customer.");
+    return [];
+  }
+
+  // Fetch transactions for each account in parallel
+  const transactionsByAccount = await Promise.all(
+    accounts.map(async (account) => {
+      const transactions = await fetchTransactionsForAccount(account.account_no);
+      return {
+        accountId: account.account_no,
+        transactions,
+      };
+    })
+  );
+
+  return transactionsByAccount; // [{ accountId: "123", transactions: [...] }, { accountId: "456", transactions: [...] }]
+}
+
+
+//const transactions =  fetchCustomerTransactions("shazilkp");
+//console.log(transactions);
+useEffect(() => {
+  async function fetchData() {
+    try {
+      const data = await fetchCustomerTransactions(userId);
+      console.log(userId)
+      const accounts_resp = await fetchAccountsByCustomerId(userId);
+      setAccounts(accounts_resp.accounts);
+      setTransactions(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  fetchData();
+  
+}, []); 
+
+
+
+
+//const transactions =  fetchCustomerTransactions(userID);
+
+
+
+
+
+  
 
   const [selectedAccountId, setSelectedAccountId] = useState("all");
 
   // Filter transactions if a specific account is selected
+  /*
   const transactions =
     selectedAccountId === "all"
       ? allTransactions
       : allTransactions.filter((tx) => tx.accountId === selectedAccountId);
+      
+*/
 
+const disp1_transactions = selectedAccountId === "all"
+  ? transactions.flatMap(acc => acc.transactions) // Flatten all transactions
+  : transactions
+      .filter(acc => acc.accountId === selectedAccountId) // Find the right account
+      .flatMap(acc => acc.transactions); // Extract transactions
+
+const disp_transactions = transactions.flatMap(acc => acc.transactions);
+console.log(transactions);
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-100">
       <div className="p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow max-w-md w-full bg-white">
@@ -1007,37 +1152,196 @@ const ViewTransactionHistoryForm = ({ setActiveForm }) => {
           onChange={(e) => setSelectedAccountId(e.target.value)}
         >
           {accounts.map((acc) => (
-            <option key={acc.id} value={acc.id}>
-              {acc.type} {acc.account ? `- ${acc.account}` : ""}
+            <option key={acc.account_no} value={acc.account_no}>
+              {acc.account_type} {acc.account_no ? `- ${acc.account_no}` : ""}
             </option>
           ))}
         </select>
         {transactions.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="min-w-full border-collapse border border-gray-300">
-              <thead>
-                <tr className="bg-gray-200">
-                  <th className="border border-gray-300 p-2 text-left">ID</th>
-                  <th className="border border-gray-300 p-2 text-left">Date</th>
-                  <th className="border border-gray-300 p-2 text-left">Description</th>
-                  <th className="border border-gray-300 p-2 text-left">Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                {transactions.map((tx) => (
+            <thead>
+              <tr className="bg-gray-200">
+                <th className="border border-gray-300 p-2 text-left">ID</th>
+                <th className="border border-gray-300 p-2 text-left">Date</th>
+                <th className="border border-gray-300 p-2 text-left">Time</th>
+                <th className="border border-gray-300 p-2 text-left">Type</th>
+                <th className="border border-gray-300 p-2 text-left">Sender Account</th>
+                <th className="border border-gray-300 p-2 text-left">Receiver Account</th>
+                <th className="border border-gray-300 p-2 text-left">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {disp_transactions.map((tx) => {
+                const dateObj = new Date(tx.timestamp);
+                const formattedDate = dateObj.toLocaleDateString(); // Extracts date
+                const formattedTime = dateObj.toLocaleTimeString(); // Extracts time
+
+                return (
                   <tr key={tx.id} className="hover:bg-gray-100 transition">
                     <td className="border border-gray-300 p-2">{tx.id}</td>
-                    <td className="border border-gray-300 p-2">{tx.date}</td>
-                    <td className="border border-gray-300 p-2">{tx.description}</td>
-                    <td className="border border-gray-300 p-2">{tx.amount}</td>
+                    <td className="border border-gray-300 p-2">{formattedDate}</td>
+                    <td className="border border-gray-300 p-2">{formattedTime}</td>
+                    <td className="border border-gray-300 p-2">{tx.type}</td>
+                    <td className="border border-gray-300 p-2">{tx.sender_acc_no || "N/A"}</td>
+                    <td className="border border-gray-300 p-2">{tx.receiver_acc_no || "N/A"}</td>
+                    <td className="border border-gray-300 p-2">₹{tx.amount}</td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                );
+              })}
+            </tbody>
+          </table>
+
+
           </div>
         ) : (
           <p className="text-gray-700">No transactions found for this account.</p>
         )}
+        <button
+          onClick={() => setActiveForm(null)}
+          className="mt-4 w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition-colors"
+        >
+          Back to Dashboard
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const ViewTransactionHistoryForm3 = ({ setActiveForm, userId }) => {
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [accounts, setAccounts] = useState([]);
+  const [selectedAccountId, setSelectedAccountId] = useState("all");
+
+  async function fetchAccountsByCustomerId(custId) {
+    try {
+      const response = await fetch(`/api/accounts/user/${custId}`);
+      if (!response.ok) throw new Error(`Failed to fetch accounts: ${response.statusText}`);
+      
+      const accounts = await response.json(); // Ensure correct response structure
+      return accounts; // Expecting an array [{ account_no: "123", account_type: "Checking" }, { account_no: "456", account_type: "Savings" }]
+    } catch (error) {
+      console.error("Error fetching accounts:", error);
+      return [];
+    }
+  }
+
+  async function fetchTransactionsForAccount(accountId) {
+    try {
+      const response = await fetch(`/api/transfers/${accountId}`);
+      if (!response.ok) throw new Error(`Failed to fetch transactions for account ${accountId}: ${response.statusText}`);
+
+      const response_json = await response.json();
+      return response_json.transactions || []; // Ensure transactions exist
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+      return [];
+    }
+  }
+
+  async function fetchCustomerTransactions(custId) {
+    const accounts = await fetchAccountsByCustomerId(custId);
+
+    if (!accounts || accounts.length === 0) {
+      console.log("No accounts found for this customer.");
+      return [];
+    }
+
+    setAccounts(accounts); // Set accounts to state
+
+    // Fetch transactions for each account
+    const transactionsByAccount = await Promise.all(
+      accounts.map(async (account) => {
+        const transactions = await fetchTransactionsForAccount(account.account_no);
+        return transactions.map((tx) => ({ ...tx, accountId: account.account_no }));
+      })
+    );
+
+    return transactionsByAccount.flat(); // Flatten transactions into a single array
+  }
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const data = await fetchCustomerTransactions(userId);
+        console.log(data);
+        setTransactions(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (userId) fetchData();
+  }, [userId]); // Include userId as dependency
+
+  // Filter transactions based on selected account
+  const filteredTransactions =
+    selectedAccountId === "all"
+      ? transactions
+      : transactions.filter((tx) => tx.accountId === selectedAccountId);
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-100">
+      <div className="p-6 rounded-lg shadow-2xl max-w-lg w-full bg-gradient-to-r from-blue-50 to-indigo-100">
+        <h3 className="text-2xl font-bold mb-4 text-gray-800">Transaction History</h3>
+        
+        <select
+          className="w-full p-3 border rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-600"
+          value={selectedAccountId}
+          onChange={(e) => setSelectedAccountId(e.target.value)}
+        >
+          <option value="all">All Accounts</option>
+          {accounts.map((acc) => (
+            <option key={acc.account_no} value={acc.account_no}>
+              {acc.account_type} - {acc.account_no}
+            </option>
+          ))}
+        </select>
+
+        {loading ? (
+          <p className="text-gray-700">Loading transactions...</p>
+        ) : error ? (
+          <p className="text-red-500">Error: {error}</p>
+        ) : filteredTransactions.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="min-w-full border-collapse border border-gray-300">
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="border border-gray-300 p-2 text-left">ID</th>
+                  <th className="border border-gray-300 p-2 text-left">Date</th>
+                  <th className="border border-gray-300 p-2 text-left">Time</th>
+                  <th className="border border-gray-300 p-2 text-left">Type</th>
+                  <th className="border border-gray-300 p-2 text-left">Sender</th>
+                  <th className="border border-gray-300 p-2 text-left">Receiver</th>
+                  <th className="border border-gray-300 p-2 text-left">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredTransactions.map((tx) => {
+                  const dateObj = new Date(tx.timestamp);
+                  return (
+                    <tr key={tx.id} className="hover:bg-gray-100 transition">
+                      <td className="border border-gray-300 p-2">{tx.id}</td>
+                      <td className="border border-gray-300 p-2">{dateObj.toLocaleDateString()}</td>
+                      <td className="border border-gray-300 p-2">{dateObj.toLocaleTimeString()}</td>
+                      <td className="border border-gray-300 p-2">{tx.type}</td>
+                      <td className="border border-gray-300 p-2">{tx.sender_acc_no || "N/A"}</td>
+                      <td className="border border-gray-300 p-2">{tx.receiver_acc_no || "N/A"}</td>
+                      <td className="border border-gray-300 p-2">₹{tx.amount}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="text-gray-700">No transactions found.</p>
+        )}
+
         <button
           onClick={() => setActiveForm(null)}
           className="mt-4 w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition-colors"

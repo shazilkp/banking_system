@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation'
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
-  const [formData, setFormData] = useState({ userId: "", email: "", password: "" });
+  const [formData, setFormData] = useState({ userId: "",name: "", email: "", password: "" });
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -44,7 +44,10 @@ export default function AuthPage() {
         throw new Error(data.message);
       }
       else{
-        route = '/'
+        route = isLogin? '/dashboard' : '/login';
+        if(!isLogin){
+          setIsLogin(true);
+        }
       }
     //   alert(isLogin ? "Login successful" : "Signup successful");
       
@@ -59,8 +62,8 @@ export default function AuthPage() {
   };
 
   return (
-    <div className={`flex justify-center items-center min-h-screen ${darkMode ? "bg-gray-900" : "bg-gray-100"}`}>
-      <div className={`w-full max-w-md p-6 rounded-2xl shadow-lg ${darkMode ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
+    <div className={`flex justify-center items-center min-h-screen ${darkMode ? "bg-gray-900" : "bg-gradient-to-r from-blue-50 to-indigo-100"}`}>
+      <div className={`w-full max-w-md p-6 rounded-2xl shadow-2xl ${darkMode ? "bg-gray-800 text-white" : "bg-gradient-to-r from-blue-50 to-indigo-100 text-black"}`}>
         <h2 className="text-2xl font-bold text-center mb-4">
           {isLogin ? "Login" : "Sign Up"}
         </h2>
@@ -80,6 +83,20 @@ export default function AuthPage() {
               />
             </div>
           )}
+            {(!isLogin &&
+            <div>
+              <label className="block text-sm font-medium">Name</label>
+              <input 
+                type="text" 
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Name" 
+                required 
+                className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${darkMode ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-black"}`}
+              />
+            </div>
+            )}
           {(!isLogin &&
           <div>
             <label className="block text-sm font-medium">Email</label>

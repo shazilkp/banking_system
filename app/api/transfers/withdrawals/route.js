@@ -5,10 +5,21 @@ export async function POST(req) {
     try {
         const { acc_no, cust_id, amount } = await req.json();
 
-        if (!acc_no || !cust_id || !amount || amount <= 0) {
+        // if (!acc_no || !cust_id || !amount || amount <= 0) {
+        //     return Response.json({ error: "Invalid input" }, { status: 400 });
+        // }
+        if(!acc_no){
             return Response.json({ error: "Invalid input" }, { status: 400 });
         }
-
+        if(!cust_id){
+            return Response.json({ error: "Invalid input" }, { status: 401 });
+        }
+        if(!amount){
+            return Response.json({ error: "Invalid input" }, { status: 402 });
+        }
+        if(amount<=0){
+            return Response.json({ error: "Invalid input" }, { status: 403 });
+        }
         const connection = await pool.getConnection();
         try {
             await connection.beginTransaction();

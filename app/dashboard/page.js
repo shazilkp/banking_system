@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef,useState,useEffect } from "react";
-import { ChartPie, UserRoundPlus, Landmark ,IndianRupee, HandCoins, PiggyBank, WalletMinimal, History} from 'lucide-react';
+import { ChartPie, UserRoundPlus, Landmark ,IndianRupee, HandCoins, PiggyBank, WalletMinimal, History,Send, ReceiptIcon, ReceiptText} from 'lucide-react';
 import { decodeJwt } from "jose";
 
 const Dashboard = () => {
@@ -1134,13 +1134,16 @@ useEffect(() => {
       
 */
 
-const disp1_transactions = selectedAccountId === "all"
-  ? transactions.flatMap(acc => acc.transactions) // Flatten all transactions
+const disp_transactions = selectedAccountId === "all"
+  ? Array.from(new Map(
+      transactions.flatMap(acc => acc.transactions).map(tx => [tx.id, tx])
+    ).values()) // Remove duplicates by id
   : transactions
       .filter(acc => acc.accountId === selectedAccountId) // Find the right account
       .flatMap(acc => acc.transactions); // Extract transactions
 
-const disp_transactions = transactions.flatMap(acc => acc.transactions);
+
+const disp_transactioyns = transactions.flatMap(acc => acc.transactions);
 console.log(transactions);
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-100">
@@ -1151,12 +1154,14 @@ console.log(transactions);
           value={selectedAccountId}
           onChange={(e) => setSelectedAccountId(e.target.value)}
         >
+          <option value="all">All Accounts</option>
           {accounts.map((acc) => (
             <option key={acc.account_no} value={acc.account_no}>
               {acc.account_type} {acc.account_no ? `- ${acc.account_no}` : ""}
             </option>
           ))}
         </select>
+
         {transactions.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="min-w-full border-collapse border border-gray-300">

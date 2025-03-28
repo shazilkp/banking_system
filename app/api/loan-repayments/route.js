@@ -46,6 +46,13 @@ export async function POST(req) {
                 [new_remaining, loan_id]
             );
 
+            //update account
+
+            await connection.execute(
+                "UPDATE Account SET balance = balance - ? WHERE account_no = ?",
+                [amount_paid, repayer_acc_no]
+            );
+
             await connection.commit();
 
             return Response.json({

@@ -4,9 +4,22 @@ import { pool } from "../../../lib/db";
 export async function POST(req) {
     try {
         const { sender_acc_no, receiver_acc_no, amount } = await req.json();
-
+/*
         if (!sender_acc_no || !receiver_acc_no || !amount || amount <= 0) {
             return new Response(JSON.stringify({ error: "Invalid input" }), { status: 400 });
+        }
+        */
+        if (!sender_acc_no) {
+            return new Response(JSON.stringify({ error: "Invalid input" }), { status: 413});
+        }
+        if ( !receiver_acc_no) {
+            return new Response(JSON.stringify({ error: "Invalid input" }), { status: 410 });
+        }
+        if ( !amount) {
+            return new Response(JSON.stringify({ error: "Invalid input" }), { status: 411 });
+        }
+        if (amount <= 0) {
+            return new Response(JSON.stringify({ error: "Invalid input" }), { status: 412 });
         }
 
         const connection = await pool.getConnection();

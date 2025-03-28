@@ -95,9 +95,11 @@ const Dashboard = () => {
         {activeForm === "createAccount" && <CreateAccountForm setActiveForm={setActiveForm} userId={userId} />}
         {activeForm === "takeLoan" && <TakeLoanForm setActiveForm={setActiveForm} userId={userId} />}
         {activeForm === "transferMoney" && <TransferMoneyForm setActiveForm={setActiveForm} userId={userId}/>}
+
         {activeForm === "withdraw" && <WithdrawForm setActiveForm={setActiveForm} userId={userId}/>}
         {activeForm === "repayLoan" && <RepayLoanForm setActiveForm={setActiveForm} userId={userId} />}
         {activeForm === "viewBalance" && <ViewBalanceForm setActiveForm={setActiveForm} userId={userId}/>}
+
         {activeForm === "viewTransactions" && <ViewTransactionHistoryForm setActiveForm={setActiveForm} userId={userId} />}
       </main>
     </div>
@@ -772,7 +774,7 @@ const TakeLoanForm = ({ setActiveForm, userId }) => {
 };
 
 
-const TransferMoneyForm = ({ setActiveForm , userId }) => {
+const TransferMoneyForm1 = ({ setActiveForm , userId }) => {
   const [userAccounts] = useState([
     { id: "acc1", name: "Checking - 1267451****" },
     { id: "acc2", name: "Savings - 5719371****" }
@@ -811,6 +813,181 @@ const TransferMoneyForm = ({ setActiveForm , userId }) => {
             {userAccounts.map((account) => (
               <option key={account.id} value={account.id}>
                 {account.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Recipient Name"
+            className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+            value={recipientName}
+            onChange={(e) => setRecipientName(e.target.value)}
+          />
+        </div>
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Recipient Bank Account ID"
+            className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+            value={recipientAccountId}
+            onChange={(e) => setRecipientAccountId(e.target.value)}
+          />
+        </div>
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="What For?"
+            className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+            value={purpose}
+            onChange={(e) => setPurpose(e.target.value)}
+          />
+        </div>
+        <div className="mb-4">
+          <input
+            type="number"
+            placeholder="Amount"
+            className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+          />
+        </div>
+        <button
+          onClick={handleTransfer}
+          className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition-colors"
+        >
+          Transfer
+        </button>
+      </div>
+
+      {/* Confirmation Modal */}
+      {showConfirmation && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-white bg-opacity-20 backdrop-blur-sm">
+          <div className="p-6 rounded-lg shadow-2xl max-w-sm w-full bg-white bg-opacity-80">
+            <p className="text-lg mb-4">
+              Confirm transfer of ${amount} to {recipientName} (
+              {recipientAccountId}) for {purpose}?
+            </p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setShowConfirmation(false)}
+                className="bg-gray-300 text-gray-800 p-2 rounded hover:bg-gray-400 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmTransfer}
+                className="bg-green-600 text-white p-2 rounded hover:bg-green-700 transition-colors"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const TransferMoneyForm = ({ setActiveForm, userId }) => {
+  const [userAccounts, setUserAccounts] = useState([]);
+  const [selectedAccount, setSelectedAccount] = useState("");
+  const [recipientName, setRecipientName] = useState("");
+  const [recipientAccountId, setRecipientAccountId] = useState("");
+  const [purpose, setPurpose] = useState("");
+  const [amount, setAmount] = useState("");
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
+
+  async function fetchAccountsByCustomerId(custId) {
+    try {
+        const response = await fetch(`/api/accounts/user/${custId}`);
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch accounts: ${response.statusText}`);
+        }
+
+        const accounts = await response.json(); // Expected to be an array
+       // console.log(accounts);
+        return accounts; // [{ accountId: "123" }, { accountId: "456" }]
+    } catch (error) {
+        console.error("Error fetching accounts:", error);
+        return [];
+    }
+  }
+
+  useEffect(() => {
+    async function fetchData() {
+      console.log("hello guys");
+      try {
+        const data = await fetchAccountsByCustomerId(userId);
+        console.log(data);
+        setUserAccounts(data.accounts);
+        console.log(userAccounts);
+      } catch (error) {
+        console.error("Error fetching accounts:", error);
+      }
+    }
+    
+      fetchData();
+      console.log(userAccounts);
+    
+  }, [userId]);
+
+  
+
+  const handleTransfer = () => {
+    if (selectedAccount && recipientName && recipientAccountId && purpose && amount) {
+      setShowConfirmation(true);
+    }
+  };
+
+  const confirmTransfer = async () => {
+    try {
+      const response = await fetch("/api/transfers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sender_acc_no: selectedAccount,  // Match API key
+          receiver_acc_no: recipientAccountId, // Match API key
+          amount: Number(amount), // Ensure it's a number
+        }),
+      });
+  
+      const result = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(result.error || "Transfer failed");
+      }
+  
+      alert("Transfer successful!");
+      setActiveForm(null);
+    } catch (error) {
+      console.error("Error processing transfer:", error);
+      alert(error.message);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-100">
+      <div className="p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow max-w-md w-full bg-white">
+        <h3 className="text-2xl font-bold mb-4 text-gray-800">Transfer Money</h3>
+        <div className="mb-4">
+          <select
+            className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+            value={selectedAccount}
+            onChange={(e) => setSelectedAccount(e.target.value)}
+          >
+           {/* <option value="">Select Your Account</option>*/}
+           <option value="">
+            {userAccounts.length === 0 
+              ? "Loading accounts..." 
+              : "Select Your Account"}
+          </option>
+            {userAccounts.map((account) => (
+              <option key={account.account_no} value={account.account_no}>
+                {account.account_no}
               </option>
             ))}
           </select>
@@ -1441,32 +1618,38 @@ async function fetchTransactionsForAccount(accountId) {
   }
 }
 
+/*
 async function fetchCustomerTransactions(custId) {
+  console.log("simpler execution")
   const response = await fetchAccountsByCustomerId(custId);
   const accounts = response.accounts;
+ 
 
   if (accounts.length === 0) {
       console.log("No accounts found for this customer.");
       return [];
   }
   const account_no = accounts[0].account_no;
-  //console.log(account_no);
   const transactions = await fetchTransactionsForAccount(account_no);
   return transactions;
 }
 
-async function fetchCustomerTransactions(custId) {
-  const response = await fetchAccountsByCustomerId(custId);
-  const accounts = response.accounts; // Ensure response is structured correctly
+*/
 
-  if (!accounts || accounts.length === 0) {
+
+async function fetchCustomerTransactions(custId) {
+  console.log("array execution")
+  const response = await fetchAccountsByCustomerId(custId);
+  const accounts_resp = response.accounts; // Ensure response is structured correctly
+
+  if (!accounts_resp || accounts_resp.length === 0) {
     console.log("No accounts found for this customer.");
     return [];
   }
 
   // Fetch transactions for each account in parallel
   const transactionsByAccount = await Promise.all(
-    accounts.map(async (account) => {
+    accounts_resp.map(async (account) => {
       const transactions = await fetchTransactionsForAccount(account.account_no);
       return {
         accountId: account.account_no,

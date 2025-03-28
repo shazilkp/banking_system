@@ -54,7 +54,7 @@ const AdminDashboard = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 bg-white overflow-hidden p-6">
+      <main className="flex-1 bg-white overflow-hidden">
     {activeForm === null && <AdminOverview />}
     {activeForm === "loanApproval" && <LoanApprovalModule setActiveForm={setActiveForm} />}
     {activeForm === "accountApproval" && <AccountApprovalModule setActiveForm={setActiveForm} />}

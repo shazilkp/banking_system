@@ -3,11 +3,26 @@ import { nanoid } from "nanoid";
 
 export async function POST(req) {
     try {
-        const { loan_id, repayer_acc_no, amount_paid } = await req.json();
+        console.log("world");
 
+        
+        const { loan_id, repayer_acc_no, amount_paid } = await req.json();
+        console.log("HELLO",loan_id);
         // Validate input
-        if (!loan_id || !repayer_acc_no || !amount_paid || amount_paid <= 0) {
+        // if (!loan_id || !repayer_acc_no || !amount_paid || amount_paid <= 0) {
+        //     return Response.json({ error: 'Invalid input data' }, { status: 400 });
+        // }
+        if (!loan_id ) {
             return Response.json({ error: 'Invalid input data' }, { status: 400 });
+        }
+        if ( !amount_paid) {
+            return Response.json({ error: 'Invalid input data' }, { status: 401 });
+        }
+        if ( !repayer_acc_no) {
+            return Response.json({ error: 'Invalid input data' }, { status: 402 });
+        }
+        if (amount_paid <= 0) {
+            return Response.json({ error: 'Invalid input data' }, { status: 403 });
         }
 
         const connection = await pool.getConnection();

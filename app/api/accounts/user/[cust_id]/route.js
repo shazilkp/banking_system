@@ -2,7 +2,8 @@ import { pool } from "../../../../../lib/db";
 
 export async function GET(req, { params }) {
     try {
-        const { cust_id } = params;
+       // console.log("APi is called");
+        const { cust_id } = await params;
 
         if (!cust_id) {
             return Response.json({ error: 'Customer ID is required' }, { status: 400 });

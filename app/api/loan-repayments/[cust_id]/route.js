@@ -7,6 +7,7 @@ export async function GET(req, {params}) {
         if (!cust_id) {
             return Response.json({ error: "Customer ID is required" }, { status: 400 });
         }
+        
 
         const connection = await pool.getConnection();
         try {
@@ -16,19 +17,23 @@ export async function GET(req, {params}) {
                 [cust_id]
             );
 
+            
+
             if (loans.length === 0) {
                 return Response.json({ error: "No loans found for this customer" }, { status: 404 });
             }
 
             const loanIds = loans.map(loan => loan.loan_id);
+            console.log(loanIds)
             
             // Fetch all loan transactions for these loans
             const [transactions] = await connection.execute(
                 `SELECT * FROM LoanTransaction WHERE loan_id IN (${loanIds.map(() => "?").join(",")})`,
                 loanIds
             );
-            
+    
             connection.release();
+            console.log(transactions)
 
             return Response.json({ transactions }, { status: 200 });
         } catch (error) {

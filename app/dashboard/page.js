@@ -2,7 +2,7 @@
 
 import { useRef,useState,useEffect } from "react";
 import { ChartPie, UserRoundPlus, Landmark ,IndianRupee, HandCoins, PiggyBank, WalletMinimal, History,Send, ReceiptIcon, ReceiptText} from 'lucide-react';
-import { decodeJwt } from "jose";
+
 
 const Dashboard = () => {
   const [activeForm, setActiveForm] = useState(null);
@@ -127,91 +127,266 @@ const DashboardOverview = ({ userId }) => {
 
   // Accounts state
   const [accounts, setAccounts] = useState([]);
+  const [activities, setActivities] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+  const [activitiesNotUnique, setActivitiesNotUnique] = useState([]);
+  const [loanRepayments,setLoanRepayments] = useState([]);
+  const [loans,setLoans] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [reportData, setReportData] = useState([]);
+
   const [accountsLoading, setAccountsLoading] = useState(true);
   const [accountsError, setAccountsError] = useState(null);
-
+  const [transactionsError, setTransactionsError] = useState(null);
+  const [loanRepaymentsError, setLoanRepaymentsError] = useState(null);
+  const [loansError, setLoansError] = useState(null);
+  
   useEffect(() => {
     const fetchAccounts = async () => {
+      
       try {
         const response = await fetch(`/api/accounts/user/${userId}`);
+        
         if (!response.ok) {
           throw new Error("Failed to fetch accounts");
         }
         const data = await response.json();
         setAccounts(data.accounts);
+  
+        // Fetch transactions only after accounts are set
+        fetchTransactions(data.accounts);
       } catch (error) {
         setAccountsError(error.message);
-      } finally {
         setAccountsLoading(false);
       }
     };
+  
+    const fetchTransactions = async (accounts) => {
+      try {
+        const transactionsPromises = accounts.map(async (account) => {
+          const response = await fetch(`/api/transfers/${account.account_no}`);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch transactions for account ${account.account_no}`);
+          }
+          return response.json();
+        });
+  
+        const transactionsResults = await Promise.allSettled(transactionsPromises);
+        console.log(transactionsResults);
+        const successfulTransactions = transactionsResults
+          .filter((result) => result.status === "fulfilled")
+          .map((result) => result.value.transactions)
+          .flat();
+  
+        setTransactions(successfulTransactions);
+  
+        const rejectedTransactions = transactionsResults
+          .filter((result) => result.status === "rejected")
+          .map((result) => result.reason.message);
+  
+        if (rejectedTransactions.length > 0) {
+          setTransactionsError(rejectedTransactions.join(", "));
+        }
+      } catch (error) {
+        setTransactionsError(error.message);
+      }
+    };
+  
+    const fetchLoanRepayments = async () => {
+      try {
+        console.log("hello194");
+        const response = await fetch(`/api/loan-repayments/${userId}`);
+        
+        
+        if (!response.ok) {
+          throw new Error("Failed to fetch loan repayments");
+        }
+        const data = await response.json();
+        //console.log(data);
+        setLoanRepayments(data.transactions);
+      } catch (error) {
+        setLoanRepaymentsError(error.message);
+      }
+    };
 
+    const fetchLoans = async () => {
+      
+      try {
+        const response = await fetch(`/api/loans/${userId}`);
+        
+        
+        if (!response.ok) {
+          throw new Error("Failed to fetch loans");
+        }
+
+        const data = await response.json();
+        console.log("hello",data);
+        setLoans(data);
+      } catch (error) {
+        setLoansError(error.message);
+      }
+    };
+  
     if (userId) {
       fetchAccounts();
+      fetchLoanRepayments();
+      fetchLoans();
     }
+  
+    setAccountsLoading(false);
   }, [userId]);
 
-  const activities = [
-    {
-      id: 1,
-      icon: <IndianRupee className="w-5 h-5 text-white" />,
-      bgColor: "bg-green-500",
-      text: "Deposit of $500 credited to ",
-      highlight: "Checking",
-      date: "28-12-2018 12:34 PM",
-    },
-    {
-      id: 2,
-      icon: <IndianRupee className="w-5 h-5 text-white" />,
-      bgColor: "bg-red-500",
-      text: "Withdrawal of $200 debited from ",
-      highlight: "Savings",
-      date: "26-11-2018 08:47 PM",
-    },
-    {
-      id: 3,
-      icon: <Send className="w-5 h-5 text-white" />,
-      bgColor: "bg-blue-600",
-      text: "Transfer of $300 from Checking to Savings",
-      highlight: "",
-      date: "24-11-2018 11:13 PM",
-    },
-    {
-      id: 4,
-      icon: <PiggyBank className="w-5 h-5 text-white" />,
-      bgColor: "bg-yellow-500",
-      text: "Repayment of Loan ",
-      highlight: "#123456",
-      date: "31-12-2017 09:22 AM",
-    },
-  ];
+  useEffect(() => {
+    console.log(activities);
+  },[activities])
+  
+  useEffect(() => {
+    const formattedTransactions = transactions.map((tx) => {
+      const senderAccount = accounts.find((acc) => acc.account_no === tx.sender_acc_no);
+      const receiverAccount = accounts.find((acc) => acc.account_no === tx.receiver_acc_no);
+  
+      const senderExists = !!senderAccount;
+      const receiverExists = !!receiverAccount;
+  
+      let type = "Unknown";
+      let icon = "❓";
+      let bgColor = "bg-gray-200";
+      let amountColor = "text-gray-500";
+      let senderType = senderAccount ? senderAccount.account_type : tx.sender_acc_no || "Unknown";
+      let receiverType = receiverAccount ? receiverAccount.account_type : tx.receiver_acc_no || "Unknown";
+      
+      let description = "";
+  
+      if (tx.sender_acc_no === null) {
+        type = "Deposit";
+        icon = <IndianRupee className="w-5 h-5 text-white" />;
+        bgColor = "bg-green-500";
+        amountColor = "text-blue-500";
+        description = (
+          <>
+            Deposit of <span className={`${amountColor} font-bold`}>₹{tx.amount}</span> credited to {receiverType}
+          </>
+        );
+      } else if (tx.receiver_acc_no === null) {
+        type = "Withdrawal";
+        icon = <IndianRupee className="w-5 h-5 text-white" />;
+        bgColor = "bg-red-500";
+        amountColor = "text-orange-500";
+        description = (
+          <>
+            Withdrawal of <span className={`${amountColor} font-bold`}>₹{tx.amount}</span> from {senderType}
+          </>
+        );
+      } else if (senderExists && receiverExists) {
+        type = "Internal Transfer";
+        icon = <Send className="w-5 h-5 text-white" />;
+        bgColor = "bg-blue-500";
+        amountColor = "text-yellow-500";
+        description = (
+          <>
+            Internal transfer of <span className={`${amountColor} font-bold`}>₹{tx.amount}</span> from {senderType} to {receiverType}
+          </>
+        );
+      } else if (senderExists) {
+        type = "Sent";
+        icon = <IndianRupee className="w-5 h-5 text-white" />;
+        bgColor = "bg-red-200";
+        amountColor = "text-red-500";
+        description = (
+          <>
+            Sent <span className={`${amountColor} font-bold`}>₹{tx.amount}</span> from {senderType} to {tx.receiver_acc_no || "Unknown"}
+          </>
+        );
+      } else if (receiverExists) {
+        type = "Received";
+        icon = <IndianRupee className="w-5 h-5 text-white" />;
+        bgColor = "bg-green-200";
+        amountColor = "text-green-500";
+        description = (
+          <>
+            Received <span className={`${amountColor} font-bold`}>₹{tx.amount}</span> in {receiverType} from {tx.sender_acc_no || "Unknown"}
+          </>
+        );
+      }
+  
+      return {
+        id: tx.id,
+        type,
+        from: tx.sender_acc_no || "Bank",
+        to: tx.receiver_acc_no || "Cash",
+        amount: tx.amount,
+        date: tx.timestamp || new Date().toISOString(),
+        icon,
+        bgColor,
+        description,
+      };
+    });
+  
+    const uniqueTransactions = Array.from(new Map(formattedTransactions.map(tx => [tx.id, tx])).values());
+  
+    const formattedLoanRepayments = loanRepayments.map((loan) => {
+      const repayerAccount = accounts.find((acc) => acc.account_no === loan.repayer_acc_no);
+      const repayerType = repayerAccount ? repayerAccount.type : "Unknown";
+  
+      return {
+        id: loan.transaction_id,
+        type: "Loan Repayment",
+        from: loan.repayer_acc_no,
+        to: loan.loan_id,
+        amount: loan.amount_paid,
+        date: loan.payment_date,
+        icon: <PiggyBank className="w-5 h-5 text-white" />,
+        bgColor: "bg-yellow-500",
+        description: (
+          <>
+            Loan Repayment: <span className="text-blue-500 font-bold">₹{loan.amount_paid}</span> from {repayerType} to Loan {loan.loan_id}
+          </>
+        ),
+      };
+    });
+  
+    // Merge and sort by date (most recent first)
+    const mergedActivities = [...uniqueTransactions, ...formattedLoanRepayments].sort(
+      (a, b) => new Date(b.date) - new Date(a.date));
+      
+    const mergedActivitiesNotUnique = [...formattedTransactions, ...formattedLoanRepayments].sort(
+      (a, b) => new Date(b.date) - new Date(a.date));
 
-  const bills = [
-    {
-      id: 1,
-      icon: <ReceiptText className="w-5 h-5 text-white" />,
-      bgColor: "bg-gray-600",
-      text: "Electricity Bill: ",
-      highlight: "$150 due on 2025-04-05",
-      date: "28-12-2018 12:34 PM",
-    },
-    {
-      id: 2,
-      icon: <ReceiptText className="w-5 h-5 text-white" />,
-      bgColor: "bg-gray-600",
-      text: "Internet:  ",
-      highlight: "$60 due on 2025-04-15",
-      date: "26-11-2018 08:47 PM",
-    },
-    {
-      id: 3,
-      icon: <ReceiptText className="w-5 h-5 text-white" />,
-      bgColor: "bg-gray-600",
-      text: "Water Bill: ",
-      highlight: "$75 due on 2025-04-10",
-      date: "24-11-2018 11:13 PM",
-    },
-  ];
+    setActivities(mergedActivities);
+    setActivitiesNotUnique(mergedActivitiesNotUnique);
+  }, [accounts, transactions, loanRepayments]);
+
+  
+  
+
+  
+    useEffect(() => {
+      const groupedData = {};
+  
+      activities.forEach(({ date, amount, type }) => {
+        const day = new Date(date).toLocaleDateString();
+        if (!groupedData[day]) groupedData[day] = { income: 0, expense: 0 };
+        
+        if (type === 'Deposit' || type === 'Received') {
+          groupedData[day].income += amount;
+        } else if (type === 'Sent' || type === 'Withdraw' || type === 'Loan Repayment'){
+          groupedData[day].expense += amount;
+        }
+
+        groupedData[day].net = groupedData[day].income - groupedData[day].expense;
+      });
+  
+      setReportData(Object.entries(groupedData));
+    }, [activities]);
+
+    const handlePrev = () => {
+      setCurrentIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : reportData.length - 1));
+    };
+  
+    const handleNext = () => {
+      setCurrentIndex((prevIndex) => (prevIndex < reportData.length - 1 ? prevIndex + 1 : 0));
+    };
+
 
   return (
     <div className="flex flex-col overflow-y-auto h-full gap-6 p-6 bg-gradient-to-r from-blue-50 to-indigo-100">
@@ -318,135 +493,32 @@ const DashboardOverview = ({ userId }) => {
           </h3>
           <div className="h-48 flex items-center justify-center bg-indigo-50 rounded-lg">
             {/* Expenses chart placeholder */}
-            <div className="max-w-sm w-full bg-white rounded-lg shadow-sm p-4 md:p-6">
-              <div className="flex justify-between">
-                <div>
-                  <h5 className="leading-none text-3xl font-bold text-gray-900 pb-2">
-                    32.4k
-                  </h5>
-                  <p className="text-base font-normal text-gray-500">
-                    Users this week
-                  </p>
-                </div>
-                <div className="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-500 text-center">
-                  12%
-                  <svg
-                    className="w-3 h-3 ms-1"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 10 14"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M5 13V1m0 0L1 5m4-4 4 4"
-                    />
-                  </svg>
-                </div>
-              </div>
-              <div id="area-chart"></div>
-              <div className="grid grid-cols-1 items-center border-t border-gray-200 justify-between">
-                <div className="flex justify-between items-center pt-5">
-                  <button
-                    id="dropdownDefaultButton"
-                    data-dropdown-toggle="lastDaysdropdown"
-                    data-dropdown-placement="bottom"
-                    className="text-sm font-medium text-gray-500 hover:text-gray-900 inline-flex items-center"
-                    type="button"
-                  >
-                    Last 7 days
-                    <svg
-                      className="w-2.5 m-2.5 ms-1.5"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 10 6"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="m1 1 4 4 4-4"
-                      />
-                    </svg>
-                  </button>
-                  <div
-                    id="lastDaysdropdown"
-                    className="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44"
-                  >
-                    <ul
-                      className="py-2 text-sm text-gray-700"
-                      aria-labelledby="dropdownDefaultButton"
-                    >
-                      <li>
-                        <a
-                          href="#"
-                          className="block px-4 py-2 hover:bg-gray-100"
-                        >
-                          Yesterday
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          className="block px-4 py-2 hover:bg-gray-100"
-                        >
-                          Today
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          className="block px-4 py-2 hover:bg-gray-100"
-                        >
-                          Last 7 days
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          className="block px-4 py-2 hover:bg-gray-100"
-                        >
-                          Last 30 days
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          className="block px-4 py-2 hover:bg-gray-100"
-                        >
-                          Last 90 days
-                        </a>
-                      </li>
-                    </ul>
+            <div className="w-full max-w-lg mx-auto p-4 h-full bg-white rounded-lg shadow relative flex items-center">
+              <button onClick={handlePrev} className="absolute left-0 px-4 py-2  rounded">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <div className="w-full text-center h-full">
+                {reportData.length > 0 && (
+                  <div className="flex flex-col-reverse h-full items-center">
+                    <p className="font-semibold mb-2">{reportData[currentIndex][0]}</p>
+                    <div className="flex items-end gap-2">
+                      <div className="bg-blue-500 w-10 rounded-md" style={{ height: `${reportData[currentIndex][1].income / 100}px` }}></div>
+                      <div className="bg-red-500 w-10 rounded-md" style={{ height: `${reportData[currentIndex][1].expense / 100}px` }}></div>
+                    </div>
+                    <div className="flex justify-between w-full text-xs mt-2">
+                      <span className="text-blue-500">Income: {reportData[currentIndex][1].income}</span>
+                      <span className="text-red-500">Expense: {reportData[currentIndex][1].expense}</span>
+                    </div>
                   </div>
-                  <a
-                    href="#"
-                    className="uppercase text-sm font-semibold inline-flex items-center rounded-lg text-blue-600 hover:text-blue-700 hover:bg-gray-100 px-3 py-2"
-                  >
-                    Users Report
-                    <svg
-                      className="w-2.5 h-2.5 ms-1.5 rtl:rotate-180"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 6 10"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="m1 9 4-4-4-4"
-                      />
-                    </svg>
-                  </a>
-                </div>
+                )}
               </div>
+              <button onClick={handleNext} className="absolute right-0 px-4 py-2 rounded">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
             </div>
           </div>
         </div>
@@ -458,24 +530,17 @@ const DashboardOverview = ({ userId }) => {
         <div className="flex-1 bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-bold text-gray-800">Recent Activity</h3>
-            <a href="#" className="text-blue-500 text-sm hover:underline">
-              View All
-            </a>
+            
           </div>
           <ul className="mt-4 space-y-4">
-            {activities.map((activity) => (
+            {activities.slice(0,5).map((activity) => (
               <li key={activity.id} className="flex items-start gap-4">
-                <div
-                  className={`w-10 h-10 flex items-center justify-center rounded-full ${activity.bgColor}`}
-                >
+                <div className={`w-10 h-10 flex items-center justify-center rounded-full ${activity.bgColor}`}>
                   {activity.icon}
                 </div>
                 <div className="text-gray-700 text-sm">
-                  <span>{activity.text}</span>
-                  <span className="text-blue-500 font-semibold cursor-pointer">
-                    {activity.highlight}
-                  </span>
-                  <p className="text-xs text-gray-500">{activity.date}</p>
+                  <span>{activity.description}</span>
+                  <p className="text-xs text-gray-500">{new Date(activity.date).toLocaleDateString()}</p>
                 </div>
               </li>
             ))}
@@ -485,29 +550,31 @@ const DashboardOverview = ({ userId }) => {
         {/* Pending Bills */}
         <div className="flex-1 bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-bold text-gray-800">Pending Bills</h3>
-            <a href="#" className="text-blue-500 text-sm hover:underline">
-              View All
-            </a>
+            <h3 className="text-lg font-bold text-gray-800">Pending Loans</h3>
+            
           </div>
           <ul className="mt-4 space-y-4">
-            {bills.map((bill) => (
-              <li key={bill.id} className="flex items-start gap-4">
-                <div
-                  className={`w-10 h-10 flex items-center justify-center rounded-full ${bill.bgColor}`}
-                >
-                  {bill.icon}
+            {loans.slice(0,5).map((loan) => (
+              <li key={loan.loan_id} className="flex items-start gap-4">
+                <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-200">
+                  💰
                 </div>
                 <div className="text-gray-700 text-sm">
-                  <span>{bill.text}</span>
+                  <span>Loan ID: </span>
                   <span className="text-blue-500 font-semibold cursor-pointer">
-                    {bill.highlight}
+                    {loan.loan_id}
                   </span>
-                  <p className="text-xs text-gray-500">{bill.date}</p>
+                  <p className="text-xs text-gray-500">
+                    Remaining Amount: ₹{loan.remaining_amount}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Due Date: {new Date(loan.repayment_date).toLocaleDateString()}
+                  </p>
                 </div>
               </li>
             ))}
           </ul>
+
         </div>
       </div>
     </div>
@@ -1714,8 +1781,8 @@ const disp_transactions = selectedAccountId === "all"
       .flatMap(acc => acc.transactions); // Extract transactions
 
 
-const disp_transactioyns = transactions.flatMap(acc => acc.transactions);
-console.log(transactions);
+ const disp_transactioyns = transactions.flatMap(acc => acc.transactions);
+ console.log(transactions);
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-100">
       <div className="p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow max-w-md w-full bg-white">

@@ -3,7 +3,7 @@ import { nanoid } from "nanoid";
 
 export async function PATCH(req, { params }) {
     try {
-        const { acc_no } = params;
+        const { acc_no } = await params;
         const { status, admin_id, action_type } = await req.json();
 
         if (!acc_no || !admin_id || !["active", "inactive", "closed"].includes(status) ||

@@ -923,7 +923,7 @@ const TransferMoneyForm = ({ setActiveForm, userId }) => {
       try {
         const data = await fetchAccountsByCustomerId(userId);
         console.log(data);
-        setUserAccounts(data.accounts);
+        setUserAccounts(data.accounts || []);
         console.log(userAccounts);
       } catch (error) {
         console.error("Error fetching accounts:", error);
@@ -1670,7 +1670,8 @@ useEffect(() => {
       const data = await fetchCustomerTransactions(userId);
       console.log(userId)
       const accounts_resp = await fetchAccountsByCustomerId(userId);
-      setAccounts(accounts_resp.accounts);
+      setAccounts(accounts_resp?.accounts || []);
+
       setTransactions(data);
     } catch (err) {
       setError(err.message);
@@ -1692,7 +1693,7 @@ useEffect(() => {
 
 
 
-  
+if (error) return <p className="text-red-500">Error: {error}</p>;
 
   const [selectedAccountId, setSelectedAccountId] = useState("all");
 
@@ -1714,7 +1715,9 @@ const disp_transactions = selectedAccountId === "all"
       .flatMap(acc => acc.transactions); // Extract transactions
 
 
-const disp_transactioyns = transactions.flatMap(acc => acc.transactions);
+
+
+//const disp_transactioyns = transactions.flatMap(acc => acc.transactions);
 console.log(transactions);
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-100">

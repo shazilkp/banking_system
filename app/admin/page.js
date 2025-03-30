@@ -86,7 +86,7 @@ const AdminDashboard = () => {
     {activeForm === "loanApproval" && <LoanApprovalModule setActiveForm={setActiveForm} adminId={userId}/>}
     {activeForm === "accountApproval" && <AccountApprovalModule setActiveForm={setActiveForm} adminId={userId}/>}
     {activeForm === "accountFreeze" && <AccountFreezingModule setActiveForm={setActiveForm} adminId={userId}/>}
-    {activeForm === "transactionReversal" && <TransactionReversalModule setActiveForm={setActiveForm} />}
+    {activeForm === "transactionReversal" && <TransactionReversalModule setActiveForm={setActiveForm} adminId = {userId} />}
     {activeForm === "depositManagement" && <DepositManagementModule setActiveForm={setActiveForm} />}
 </main>
 
@@ -832,13 +832,13 @@ const AccountFreezingModule = ({ setActiveForm , adminId}) => {
   );
 };
     
-    const TransactionReversalModule = ({ setActiveForm }) => {
+    const TransactionReversalModule = ({ setActiveForm,adminId }) => {
       const [transactionId, setTransactionId] = useState("");
       const [validated, setValidated] = useState(false);
       const [transactionDetails, setTransactionDetails] = useState(null);
       const [showConfirmation, setShowConfirmation] = useState(false);
       const [reverseSlipId, setReverseSlipId] = useState(null);
-      const [adminId, setAdminId] = useState("");
+     
       const [reason, setReason] = useState("");
       const [loading, setLoading] = useState(false);
     
@@ -875,7 +875,7 @@ const AccountFreezingModule = ({ setActiveForm , adminId}) => {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ admin_id: "admin", reason }),
+            body: JSON.stringify({ admin_id: adminId, reason }),
           });
           if (!response.ok) throw new Error("Reversal failed");
           const data = await response.json();

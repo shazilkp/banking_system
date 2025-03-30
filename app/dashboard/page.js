@@ -1737,7 +1737,8 @@ useEffect(() => {
       const data = await fetchCustomerTransactions(userId);
       console.log(userId)
       const accounts_resp = await fetchAccountsByCustomerId(userId);
-      setAccounts(accounts_resp.accounts);
+      setAccounts(accounts_resp?.accounts || []);
+
       setTransactions(data);
     } catch (err) {
       setError(err.message);
@@ -1759,7 +1760,7 @@ useEffect(() => {
 
 
 
-  
+if (error) return <p className="text-red-500">Error: {error}</p>;
 
   const [selectedAccountId, setSelectedAccountId] = useState("all");
 
@@ -1781,8 +1782,10 @@ const disp_transactions = selectedAccountId === "all"
       .flatMap(acc => acc.transactions); // Extract transactions
 
 
- const disp_transactioyns = transactions.flatMap(acc => acc.transactions);
- console.log(transactions);
+
+
+//const disp_transactioyns = transactions.flatMap(acc => acc.transactions);
+console.log(transactions);
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-100">
       <div className="p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow max-w-md w-full bg-white">

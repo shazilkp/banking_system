@@ -5,9 +5,9 @@ export async function PATCH(req, { params }) {
     try {
         const { loan_id } = params;
         const { status, admin_id } = await req.json();
-
+        //console.log(loan_id,status, admin_id)
         // Validate input
-        if (!loan_id || !status || !admin_id || !["approved", "rejected", "closed"].includes(status)) {
+        if (!loan_id || !status || !admin_id || !["approved", "rejected", "closed","pending"].includes(status)) {
             return Response.json({ error: "Invalid loan ID, status, or admin ID" }, { status: 400 });
         }
 

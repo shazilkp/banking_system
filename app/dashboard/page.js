@@ -723,18 +723,26 @@ const TakeLoanForm = ({ setActiveForm, userId }) => {
   const [loanType, setLoanType] = useState("");
   const [branch, setBranch] = useState("");
   const [loanAmount, setLoanAmount] = useState("");
+  const [duration, setDuration] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [loanId, setLoanId] = useState(null);
   const [showApproval, setShowApproval] = useState(false);
+  //const [loading, setLoading] = useState(true);
+  //const [error, setError] = useState(null);
 
   const loanOptions = [
-    { type: "Agriculture", rate: "5%" },
-    { type: "House", rate: "6%" },
-    { type: "Car", rate: "7%" },
-    { type: "Small Business", rate: "8%" },
-    { type: "Education", rate: "4%" },
-    { type: "Personal", rate: "9%" }
+    { type: "Agriculture", rate: "5" },
+    { type: "House", rate: "6" },
+    { type: "Car", rate: "7" },
+    { type: "Small Business", rate: "8" },
+    { type: "Education", rate: "4" },
+    { type: "Personal", rate: "9" }
   ];
+
+  const getInterestRate = (type) => {
+    const loan = loanOptions.find((option) => option.type === type);
+    return loan ? loan.rate : 0;
+  };
 
   const handleSubmit = () => {
     if (loanType && branch && loanAmount) {
@@ -743,6 +751,8 @@ const TakeLoanForm = ({ setActiveForm, userId }) => {
   };
 
   const confirmLoan = () => {
+    console.log("confirm");
+    submitLoanRequest();
     setLoanId(Math.floor(Math.random() * 1000000));
     setShowConfirmation(false);
     setShowApproval(true);
@@ -752,6 +762,29 @@ const TakeLoanForm = ({ setActiveForm, userId }) => {
       setActiveForm(null);
     }, 2000);
   };
+
+
+  async function submitLoanRequest() {
+    try {
+      console.log("1212");
+      const response = await fetch("/api/loans", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ borrower_id:userId, principal_amount:loanAmount,interest: getInterestRate(loanType),duration })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to request loan: ${response.statusText}`);
+      }
+
+    } catch (error) {
+      console.error("Error requesting loan:", error);
+    }
+  }
+
+
+
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-100">
@@ -767,6 +800,16 @@ const TakeLoanForm = ({ setActiveForm, userId }) => {
           />
         </div>
         <div className="mb-4">
+          <input
+        type="number"
+        placeholder="Duration (months)"
+        className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+        value={duration}
+        onChange={(e) => setDuration(e.target.value)}
+      />
+        </div>
+        
+        <div className="mb-4">
           <select
             value={loanType}
             onChange={(e) => setLoanType(e.target.value)}
@@ -775,7 +818,7 @@ const TakeLoanForm = ({ setActiveForm, userId }) => {
             <option value="">Select Loan Type</option>
             {loanOptions.map((loan, index) => (
               <option key={index} value={loan.type}>
-                {loan.type} ({loan.rate} interest)
+                {loan.type} ({loan.rate}% interest)
               </option>
             ))}
           </select>

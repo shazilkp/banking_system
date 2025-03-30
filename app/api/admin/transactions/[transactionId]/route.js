@@ -1,17 +1,17 @@
-import { pool } from "@/lib/db"; // Ensure correct import path
+import { pool } from "../../../../../lib/db";
 
 export async function GET(req, { params }) {
     const conn = await pool.getConnection();
     console.log("Params received:", params);
 
     try {
-        const { trans_id } = params;
-        console.log("Fetching transaction for ID:", trans_id);
+        const { transactionId } = await params;
+        console.log("Fetching transaction for ID:", transactionId);
 
         // Query the database
         const [transaction] = await conn.query(
             "SELECT * FROM Transactions WHERE trans_id = ?", 
-            [trans_id]
+            [transactionId]
         );
         console.log("Query result:", transaction);
 

@@ -788,7 +788,7 @@ const AccountApprovalModule = ({ setActiveForm }) => {
     
       const validateTransactionId = async () => {
         try {
-            const response = await fetch(`/api/transactions/${transactionId}`);
+            const response = await fetch(`/api/admin/transactions/${transactionId}`);
             if (!response.ok) throw new Error("Transaction not found");
     
             const data = await response.json();
@@ -814,16 +814,16 @@ const AccountApprovalModule = ({ setActiveForm }) => {
       const confirmReverse = async () => {
         setLoading(true);
         try {
-          const response = await fetch(`/api/transactions/reverse/${transactionId}`, {
+          const response = await fetch(`/api/admin/transactions/reverse/${transactionId}`, {
             method: "PATCH",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ admin_id: ADMIN123, reason }),
+            body: JSON.stringify({ admin_id: "admin", reason }),
           });
           if (!response.ok) throw new Error("Reversal failed");
           const data = await response.json();
-          setReverseSlipId(data.reverseSlipId);
+         // setReverseSlipId(data.reverseSlipId);
           setShowConfirmation(false);
           setTimeout(() => setActiveForm(null), 2000);
         } catch (error) {
@@ -861,13 +861,6 @@ const AccountApprovalModule = ({ setActiveForm }) => {
                 <p className="mb-2 text-gray-700 font-bold">Amount: ${transactionDetails.amount}</p>
                 <p className="mb-2 text-gray-700">Date: {transactionDetails.date}</p>
                 <p className="mb-2 text-gray-700">Status: {transactionDetails.status}</p>
-                <input
-                  type="text"
-                  placeholder="Enter Admin ID"
-                  className="w-full p-2 border rounded my-2"
-                  value={adminId}
-                  onChange={(e) => setAdminId(e.target.value)}
-                />
                 <input
                   type="text"
                   placeholder="Enter Reason"

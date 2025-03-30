@@ -1,15 +1,17 @@
+import { Trash } from "lucide-react";
 import { pool } from "../../../../../../lib/db";
 
 export async function PATCH(req, {params}) {
     const conn = await pool.getConnection(); // Get a connection
     try {
-        const { trans_id } = params;
+        const { trans_id } = await params;
         const { admin_id, reason } = await req.json();
 
         // Fetch transaction details
+        console.log(trans_id,admin_id,reason)
         const [transaction] = await conn.query("SELECT sender_acc_no, receiver_acc_no, amount FROM Transactions WHERE trans_id = ?", [trans_id]);
         if (transaction.length === 0) {
-            return Response.json({ error: "Transaction not found" }, { status: 404 });
+            return Response.json({ error: "Transaction not found" }, { status: 405 });
         }
 
         const { sender_acc_no, receiver_acc_no, amount } = transaction[0];

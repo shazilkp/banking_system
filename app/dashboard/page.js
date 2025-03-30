@@ -594,7 +594,7 @@ const DashboardOverview = ({ userId ,userName}) => {
             {loans.slice(0,5).map((loan) => (
               <li key={loan.loan_id} className="flex items-start gap-4">
                 <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-200">
-                  💰
+                  <Landmark/>
                 </div>
                 <div className="text-gray-700 text-sm">
                   <span>Loan ID: </span>

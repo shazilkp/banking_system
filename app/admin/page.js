@@ -776,26 +776,34 @@ const AccountApprovalModule = ({ setActiveForm }) => {
       );
     };
     
-
     const TransactionReversalModule = ({ setActiveForm }) => {
       const [transactionId, setTransactionId] = useState("");
       const [validated, setValidated] = useState(false);
       const [transactionDetails, setTransactionDetails] = useState(null);
       const [showConfirmation, setShowConfirmation] = useState(false);
       const [reverseSlipId, setReverseSlipId] = useState(null);
+      const [adminId, setAdminId] = useState("");
+      const [reason, setReason] = useState("");
+      const [loading, setLoading] = useState(false);
     
-      const validateTransactionId = () => {
-        if (transactionId.trim() !== "") {
-          // Simulate validation and fetching transaction details
-          setTransactionDetails({
-            amount: 500,
-            date: "2025-04-15",
-            status: "Completed",
-            description: "Payment for order #1234"
-          });
-          setValidated(true);
+      const validateTransactionId = async () => {
+        try {
+            const response = await fetch(`/api/transactions/${transactionId}`);
+            if (!response.ok) throw new Error("Transaction not found");
+    
+            const data = await response.json();
+    
+            setTransactionDetails({
+                amount: data.amount,
+                date: data.date, // This was missing
+                status: data.status
+            });
+    
+            setValidated(true);
+        } catch (error) {
+            alert(error.message);
         }
-      };
+    };
     
       const handleReverse = () => {
         if (transactionId && transactionDetails) {
@@ -803,13 +811,26 @@ const AccountApprovalModule = ({ setActiveForm }) => {
         }
       };
     
-      const confirmReverse = () => {
-        const slipId = Math.floor(Math.random() * 1000000);
-        setReverseSlipId(slipId);
-        setShowConfirmation(false);
-        setTimeout(() => {
-          setActiveForm(null);
-        }, 2000);
+      const confirmReverse = async () => {
+        setLoading(true);
+        try {
+          const response = await fetch(`/api/transactions/reverse/${transactionId}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ admin_id: ADMIN123, reason }),
+          });
+          if (!response.ok) throw new Error("Reversal failed");
+          const data = await response.json();
+          setReverseSlipId(data.reverseSlipId);
+          setShowConfirmation(false);
+          setTimeout(() => setActiveForm(null), 2000);
+        } catch (error) {
+          alert(error.message);
+        } finally {
+          setLoading(false);
+        }
       };
     
       return (
@@ -837,23 +858,26 @@ const AccountApprovalModule = ({ setActiveForm }) => {
             )}
             {validated && transactionDetails && (
               <div className="mt-4">
-                <p className="mb-2 text-gray-700">
-                  <span className="font-bold">Amount:</span> ${transactionDetails.amount}
-                </p>
-                <p className="mb-2 text-gray-700">
-                  <span className="font-bold">Date:</span> {transactionDetails.date}
-                </p>
-                <p className="mb-2 text-gray-700">
-                  <span className="font-bold">Status:</span> {transactionDetails.status}
-                </p>
-                {transactionDetails.description && (
-                  <p className="mb-4 text-gray-700">
-                    <span className="font-bold">Description:</span> {transactionDetails.description}
-                  </p>
-                )}
+                <p className="mb-2 text-gray-700 font-bold">Amount: ${transactionDetails.amount}</p>
+                <p className="mb-2 text-gray-700">Date: {transactionDetails.date}</p>
+                <p className="mb-2 text-gray-700">Status: {transactionDetails.status}</p>
+                <input
+                  type="text"
+                  placeholder="Enter Admin ID"
+                  className="w-full p-2 border rounded my-2"
+                  value={adminId}
+                  onChange={(e) => setAdminId(e.target.value)}
+                />
+                <input
+                  type="text"
+                  placeholder="Enter Reason"
+                  className="w-full p-2 border rounded my-2"
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                />
                 <button
                   onClick={handleReverse}
-                  className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition-colors"
+                  className="w-full bg-red-600 text-white p-3 rounded hover:bg-red-700 transition-colors"
                 >
                   Reverse Transaction
                 </button>
@@ -861,7 +885,6 @@ const AccountApprovalModule = ({ setActiveForm }) => {
             )}
           </div>
     
-          {/* Confirmation Modal */}
           {showConfirmation && (
             <div className="fixed inset-0 flex items-center justify-center z-50 bg-white bg-opacity-20 backdrop-blur-sm">
               <div className="p-6 rounded-lg shadow-2xl max-w-sm w-full bg-white bg-opacity-80">
@@ -878,21 +901,20 @@ const AccountApprovalModule = ({ setActiveForm }) => {
                   <button
                     onClick={confirmReverse}
                     className="bg-green-600 text-white p-2 rounded hover:bg-green-700 transition-colors"
+                    disabled={loading}
                   >
-                    Confirm
+                    {loading ? "Processing..." : "Confirm"}
                   </button>
                 </div>
               </div>
             </div>
           )}
     
-          {/* Approval Modal */}
           {reverseSlipId && (
             <div className="fixed inset-0 flex items-center justify-center z-50 bg-white bg-opacity-20 backdrop-blur-sm">
               <div className="p-6 rounded-lg shadow-2xl max-w-sm w-full bg-white bg-opacity-80">
                 <p className="text-lg">
-                  Transaction reversed successfully! Reverse Slip ID:{" "}
-                  <span className="font-bold">{reverseSlipId}</span>
+                  Transaction reversed successfully! Reverse Slip ID: <span className="font-bold">{reverseSlipId}</span>
                 </p>
               </div>
             </div>
@@ -901,118 +923,108 @@ const AccountApprovalModule = ({ setActiveForm }) => {
       );
     };
     
-
-    const DepositManagementModule = ({ setActiveForm }) => {
-      const [username, setUsername] = useState("");
-      const [accountId, setAccountId] = useState("");
-      const [depositAmount, setDepositAmount] = useState("");
-      const [validated, setValidated] = useState(false);
-      const [accountDetails, setAccountDetails] = useState(null);
+    const DepositManagementModule = ({ setActiveForm, adminId }) => {
+      const [accountNumber, setAccountNumber] = useState("");
+      const [amount, setAmount] = useState("");
       const [showConfirmation, setShowConfirmation] = useState(false);
       const [depositSlipId, setDepositSlipId] = useState(null);
-    
-      const validateAccount = () => {
-        if (username.trim() !== "" && accountId.trim() !== "") {
-          // Simulate validation and fetching account details
-          setAccountDetails({
-            ownerName: username,
-            accountId,
-            balance: 1000, // Example current balance
-          });
-          setValidated(true);
-        }
-      };
+      const [error, setError] = useState(null);
+      const [loading, setLoading] = useState(false);
     
       const handleDeposit = () => {
-        if (depositAmount) {
+        if (accountNumber.trim() && parseFloat(amount) > 0) {
           setShowConfirmation(true);
         }
       };
     
-      const confirmDeposit = () => {
-        // Increase the account balance by the deposit amount
-        const newBalance =
-          accountDetails.balance + parseFloat(depositAmount || "0");
-        setAccountDetails({ ...accountDetails, balance: newBalance });
-    
-        const slipId = Math.floor(Math.random() * 1000000);
-        setDepositSlipId(slipId);
+      const confirmDeposit = async () => {
         setShowConfirmation(false);
-        setTimeout(() => {
-          setActiveForm(null);
-        }, 2000);
+        setLoading(true);
+        setError(null);
+    
+        try {
+          const response = await fetch("/api/transfers/deposits", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              acc_no: accountNumber,
+              admin_id: "ADMIN123",
+              amount: Number(amount),
+            }),
+          });
+    
+          const responseText = await response.text();
+          let data = {};
+          if (responseText) {
+            try {
+              data = JSON.parse(responseText);
+            } catch (err) {
+              console.error("Error parsing JSON:", err);
+            }
+          }
+    
+          if (!response.ok) {
+            console.error("Deposit error data:", data);
+            throw new Error(data.error || `Deposit failed with status ${response.status}`);
+          }
+    
+          console.log("Deposit successful:", data);
+          setDepositSlipId(data.deposit_id);
+    
+          setAccountNumber("");
+          setAmount("");
+        } catch (err) {
+          console.error("Error processing deposit:", err);
+          setError(err.message);
+        } finally {
+          setLoading(false);
+          if (!error) {
+            setTimeout(() => {
+              setActiveForm(null);
+            }, 2000);
+          }
+        }
       };
     
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-100">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-green-50 to-green-100">
           <div className="p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow max-w-md w-full bg-white">
-            <h3 className="text-2xl font-bold mb-4 text-gray-800">Deposit Money</h3>
-            {!validated && (
-              <>
-                <div className="mb-4">
-                  <input
-                    type="text"
-                    placeholder="Enter Username"
-                    className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                  />
-                </div>
-                <div className="mb-4">
-                  <input
-                    type="text"
-                    placeholder="Enter Account ID"
-                    className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
-                    value={accountId}
-                    onChange={(e) => setAccountId(e.target.value)}
-                  />
-                </div>
-                <button
-                  onClick={validateAccount}
-                  className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition-colors"
-                >
-                  Validate Account
-                </button>
-              </>
-            )}
-            {validated && accountDetails && (
-              <div className="mt-4">
-                <p className="mb-2 text-gray-700">
-                  <span className="font-bold">Owner Name:</span> {accountDetails.ownerName}
-                </p>
-                <p className="mb-2 text-gray-700">
-                  <span className="font-bold">Account ID:</span> {accountDetails.accountId}
-                </p>
-                <p className="mb-4 text-gray-700">
-                  <span className="font-bold">Current Balance:</span> ${accountDetails.balance}
-                </p>
-                <div className="mb-4">
-                  <input
-                    type="number"
-                    placeholder="Enter Deposit Amount"
-                    className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
-                    value={depositAmount}
-                    onChange={(e) => setDepositAmount(e.target.value)}
-                  />
-                </div>
-                <button
-                  onClick={handleDeposit}
-                  className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition-colors"
-                >
-                  Deposit Money
-                </button>
-              </div>
-            )}
+            <h3 className="text-2xl font-bold mb-4 text-gray-800">Deposit</h3>
+            {error && <p className="text-red-500 mb-4">{error}</p>}
+            <div className="mb-4">
+              <input
+                type="text"
+                placeholder="Account Number"
+                className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-green-600"
+                value={accountNumber}
+                onChange={(e) => setAccountNumber(e.target.value)}
+              />
+            </div>
+            <div className="mb-4">
+              <input
+                type="number"
+                placeholder="Amount"
+                className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-green-600"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+              />
+            </div>
+            <button
+              onClick={handleDeposit}
+              disabled={loading}
+              className="w-full bg-green-600 text-white p-3 rounded hover:bg-green-700 transition-colors disabled:opacity-50"
+            >
+              {loading ? "Processing..." : "Deposit"}
+            </button>
           </div>
     
-          {/* Confirmation Modal */}
           {showConfirmation && (
             <div className="fixed inset-0 flex items-center justify-center z-50 bg-white bg-opacity-20 backdrop-blur-sm">
               <div className="p-6 rounded-lg shadow-2xl max-w-sm w-full bg-white bg-opacity-80">
                 <p className="text-lg mb-4">
-                  Confirm depositing ${depositAmount} into account ID{" "}
-                  <span className="font-bold">{accountId}</span> for user{" "}
-                  <span className="font-bold">{username}</span>?
+                  Confirm deposit of ${amount} into account {accountNumber}?
                 </p>
                 <div className="flex justify-end space-x-4">
                   <button
@@ -1032,12 +1044,11 @@ const AccountApprovalModule = ({ setActiveForm }) => {
             </div>
           )}
     
-          {/* Approval Modal */}
           {depositSlipId && (
             <div className="fixed inset-0 flex items-center justify-center z-50 bg-white bg-opacity-20 backdrop-blur-sm">
               <div className="p-6 rounded-lg shadow-2xl max-w-sm w-full bg-white bg-opacity-80">
                 <p className="text-lg">
-                  Deposit successful! New Balance: ${accountDetails.balance}. Deposit Slip ID:{" "}
+                  Your deposit has been processed! Deposit Slip ID: {" "}
                   <span className="font-bold">{depositSlipId}</span>
                 </p>
               </div>
@@ -1046,6 +1057,4 @@ const AccountApprovalModule = ({ setActiveForm }) => {
         </div>
       );
     };
-    
-
 export default AdminDashboard;

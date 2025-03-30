@@ -7,23 +7,54 @@ import { ChartPie, UserRoundPlus, Landmark ,IndianRupee, HandCoins, PiggyBank, W
 const Dashboard = () => {
   const [activeForm, setActiveForm] = useState(null);
   const [userId,setUserId] = useState(null);
+  const [userName,setUserName] = useState("");
 
   useEffect(() => {
-
-    const fetchUserId = async () => {
+    const fetchData = async () => {
       try {
-          const response = await fetch("/api/auth/", {
-              method: "GET",
-              credentials: "include", // Ensure cookies are sent
-          });
+        // Fetch user ID
+        const response = await fetch("/api/auth/", {
+          method: "GET",
+          credentials: "include", // Ensure cookies are sent
+        });
+  
+        if (!response.ok) throw new Error("Unauthorized");
+  
+        const data = await response.json();
+        setUserId(data.userId);
+  
+        // Fetch user name only after user ID is retrieved
+        const userResponse = await fetch(`/api/user/${data.userId}`);
+        if (!userResponse.ok) throw new Error("User not found");
+  
+        const userData = await userResponse.json();
+  
+        setUserName(userData.customers[0].customer_name);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+  
+    fetchData();
+  }, []);
+  
+
+  /*
+  useEffect(() => {
+
+    const fetchUserName = async () => {
+      try {
+          const response = await fetch(`/api/user/${userId}`);
+
+       
   
           if (!response.ok) {
-              throw new Error("Unauthorized");
+              throw new Error("User not found");
           }
   
           const data = await response.json();
-          setUserId(data.userId);
-          return data.userId;
+          setUserName(data.customer_name);
+          return data.customer_name;
       } catch (error) {
           console.error("Error fetching user ID:", error);
           return null;
@@ -31,8 +62,14 @@ const Dashboard = () => {
   };
 
   // Usage
-  const userID =fetchUserId();
-  },[])
+  const userID =fetchUserName();
+  console.log(userID);
+  },[userId])
+  */
+
+  useEffect(() => {
+    console.log(userId,userName);
+  },[userId,userName])
 
   return (
       <div className="flex h-screen bg-gray-100 overflow-hidden">
@@ -91,7 +128,7 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <main className="flex-1 overflow-hidden">
-        {activeForm === null && <DashboardOverview userId={userId}/>}
+        {activeForm === null && <DashboardOverview userId={userId} userName= {userName}/>}
         {activeForm === "createAccount" && <CreateAccountForm setActiveForm={setActiveForm} userId={userId} />}
         {activeForm === "takeLoan" && <TakeLoanForm setActiveForm={setActiveForm} userId={userId} />}
         {activeForm === "transferMoney" && <TransferMoneyForm setActiveForm={setActiveForm} userId={userId}/>}
@@ -107,7 +144,7 @@ const Dashboard = () => {
 };
 
 
-const DashboardOverview = ({ userId }) => {
+const DashboardOverview = ({ userId ,userName}) => {
   const [avatar, setAvatar] = useState(
     "https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg"
   );
@@ -409,7 +446,7 @@ const DashboardOverview = ({ userId }) => {
         </div>
         <div>
           <h3 className="text-3xl font-bold text-gray-800">
-            Welcome back, Victor!
+            Welcome back, {userName}!
           </h3>
           <p className="text-gray-600">
             Last login: 09/06/2016 05:34:59 PM PHT

@@ -87,7 +87,7 @@ const AdminDashboard = () => {
     {activeForm === "accountApproval" && <AccountApprovalModule setActiveForm={setActiveForm} adminId={userId}/>}
     {activeForm === "accountFreeze" && <AccountFreezingModule setActiveForm={setActiveForm} adminId={userId}/>}
     {activeForm === "transactionReversal" && <TransactionReversalModule setActiveForm={setActiveForm} adminId = {userId} />}
-    {activeForm === "depositManagement" && <DepositManagementModule setActiveForm={setActiveForm} />}
+    {activeForm === "depositManagement" && <DepositManagementModule setActiveForm={setActiveForm} adminId = {userId} />}
 </main>
 
     </div>
@@ -999,7 +999,7 @@ const AccountFreezingModule = ({ setActiveForm , adminId}) => {
             },
             body: JSON.stringify({
               acc_no: accountNumber,
-              admin_id: "ADMIN123",
+              admin_id: adminId,
               amount: Number(amount),
             }),
           });

@@ -1,18 +1,17 @@
-import { pool } from "../../../../../lib/db";
+import { pool } from "../../../../lib/db";
 
 export async function GET(req, { params }) {
     try {
-       // console.log("APi is called");
-        const { cust_id } = await params;
+        const { acc_no } = params;
 
-        if (!cust_id) {
-            return Response.json({ error: 'Customer ID is required' }, { status: 400 });
+        if (!acc_no) {
+            return Response.json({ error: 'Account no is required' }, { status: 400 });
         }
 
         // Fetch accounts linked to the given customer
         const [accounts] = await pool.execute(
-            "SELECT * FROM Account WHERE cust_id = ?",
-            [cust_id]
+            "SELECT * FROM Account WHERE account_no = ?",
+            [acc_no]
         );
 
         if (accounts.length === 0) {

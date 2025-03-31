@@ -3,13 +3,13 @@ import { pool } from "../../../../lib/db";
 
 export async function POST(req) {
     try {
-        const { acc_no, cust_id, amount } = await req.json();
+        const { acc_no, admin_id, amount } = await req.json();
 
         if (!acc_no) {
             return Response.json({ error: "Invalid input" }, { status: 400 });
         }
-        if (!cust_id) {
-            return Response.json({ error: "Invalid input" }, { status: 401 });
+        if (!admin_id) {
+            return Response.json({ error: "Unauthorized access" }, { status: 401 });
         }
         if (!amount) {
             return Response.json({ error: "Invalid input" }, { status: 402 });
@@ -22,18 +22,28 @@ export async function POST(req) {
         try {
             await connection.beginTransaction();
 
-            // Check if account belongs to customer
+            // Check if account exists
             const [account] = await connection.execute(
-                "SELECT status, balance FROM Account WHERE account_no = ? AND cust_id = ? FOR UPDATE",
-                [acc_no, cust_id]
+                "SELECT status, balance FROM Account WHERE account_no = ? FOR UPDATE",
+                [acc_no]
             );
 
             if (account.length === 0) {
-                throw new Error("Account not found or does not belong to the customer");
+                throw new Error("Account not found");
             }
 
             if (account[0].status !== "active") {
                 return Response.json({ error: "Cannot deposit into an inactive account" }, { status: 401 });
+            }
+
+            // Verify if admin exists
+            const [admin] = await connection.execute(
+                "SELECT admin_id FROM Admin WHERE admin_id = ?",
+                [admin_id]
+            );
+
+            if (admin.length === 0) {
+                throw new Error("Unauthorized admin");
             }
 
             // Add amount to account balance
@@ -46,8 +56,8 @@ export async function POST(req) {
 
             // Insert deposit record
             await connection.execute(
-                "INSERT INTO Deposit (deposit_id, acc_no, cust_id, amount) VALUES (?, ?, ?, ?)",
-                [deposit_id, acc_no, cust_id, amount]
+                "INSERT INTO Deposit (deposit_id, acc_no, admin_id, amount) VALUES (?, ?, ?, ?)",
+                [deposit_id, acc_no, admin_id, amount]
             );
 
             await connection.commit();

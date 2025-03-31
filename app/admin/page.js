@@ -7,7 +7,7 @@ import { BanknotesIcon, ArrowDownIcon } from "@heroicons/react/24/outline";
 
 
 const AdminDashboard = () => {
-  const [activeForm, setActiveForm] = useState("loanApproval");
+  const [activeForm, setActiveForm] = useState(null);
   const [userId,setUserId] = useState(null);
 
   useEffect(() => {
@@ -35,6 +35,11 @@ const AdminDashboard = () => {
   // Usage
   const userID =fetchUserId();
   },[])
+
+  useEffect(() => {
+    console.log(userId);
+
+  },[userId])
 
   return (
       <div className="flex h-screen bg-gray-100 overflow-hidden">
@@ -88,8 +93,8 @@ const AdminDashboard = () => {
 
       {/* Main Content */}
       <main className="flex-1 bg-white overflow-hidden">
-    {activeForm === null && <AdminOverview />}
-    {activeForm === "loanApproval" && <LoanApprovalModule setActiveForm={setActiveForm} adminId={userId}/>}
+   {/*  {activeForm === null && <AdminOverview />}*/}
+    {activeForm === "loanApproval" || activeForm === null && <LoanApprovalModule setActiveForm={setActiveForm} adminId={userId}/>}
     {activeForm === "accountApproval" && <AccountApprovalModule setActiveForm={setActiveForm} adminId={userId}/>}
     {activeForm === "accountFreeze" && <AccountFreezingModule setActiveForm={setActiveForm} adminId={userId}/>}
     {activeForm === "transactionReversal" && <TransactionReversalModule setActiveForm={setActiveForm} adminId = {userId} />}
@@ -428,7 +433,7 @@ const LoanApprovalModule = ({ setActiveForm,adminId }) => {
     // Simulate processing delay then close the form
     setTimeout(() => {
       setActiveForm(null);
-    }, 2000);
+    }, 9000);
 
     } catch (error) {
       console.error("Error processing loan:", error);
@@ -577,8 +582,9 @@ const AccountApprovalModule = ({ setActiveForm ,adminId}) => {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          status: action === "approve" ? "approved" : "rejected",
+          status: action === "approve" ? "active" : "inactive",
           admin_id: adminId,
+          action_type: "approve"
         }),
       });
 

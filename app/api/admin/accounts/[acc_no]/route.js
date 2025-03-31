@@ -5,7 +5,7 @@ export async function PATCH(req, { params }) {
     try {
         const { acc_no } = await params;
         const { status, admin_id, action_type } = await req.json();
-        //console.log(acc_no,status, admin_id, action_type)
+        console.log(acc_no,status, admin_id, action_type)
         if (!acc_no || !admin_id || !["active", "inactive", "closed","pending"].includes(status) ||
             !["approve", "freeze", "close"].includes(action_type)) {
             return Response.json({ error: "Invalid account number, status, admin ID, or action type" }, { status: 400 });

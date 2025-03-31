@@ -26,7 +26,7 @@ export async function GET(req, { params }) {
             receiverAccNo: transaction[0].receiver_acc_no,
             amount: transaction[0].amount,
             status: transaction[0].status,
-            date: transaction[0].created_at
+            date: transaction[0].timestamp
         }, { status: 200 });
 
     } catch (error) {

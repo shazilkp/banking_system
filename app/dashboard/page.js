@@ -1070,7 +1070,7 @@ const TransferMoneyForm = ({ setActiveForm, userId }) => {
       try {
         const data = await fetchAccountsByCustomerId(userId);
         console.log(data);
-        setUserAccounts(data.accounts);
+        setUserAccounts(data.accounts || []);
         console.log(userAccounts);
       } catch (error) {
         console.error("Error fetching accounts:", error);

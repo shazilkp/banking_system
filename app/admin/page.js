@@ -7,7 +7,7 @@ import { BanknotesIcon, ArrowDownIcon } from "@heroicons/react/24/outline";
 
 
 const AdminDashboard = () => {
-  const [activeForm, setActiveForm] = useState(null);
+  const [activeForm, setActiveForm] = useState("loanApproval");
   const [userId,setUserId] = useState(null);
 
   useEffect(() => {
@@ -41,12 +41,18 @@ const AdminDashboard = () => {
       {/* Sidebar */}
       <aside className="w-90 bg-gray-900 text-white p-6 flex-shrink-0">
         <div className="p-5 flex flex-col text-center"><h2 className="text-3xl font-bold mb-6">NITC Bank</h2></div>
-  
+
+       {/*
         <div className={`flex flex-col p-4 text-base font-normal rounded-lg 
-          ${activeForm === null ? "bg-blue-700 text-white" : "text-gray-900 text-white hover:bg-gray-100 hover:bg-gray-700"}`}>
-				<button onClick={() => setActiveForm(null)} className="flex flex-row ml-5"> <ChartPie className="w-7 h-7  text-primary"/><div className="text-xl ml-2">Dashboard</div>
-        </button> 
+            ${activeForm === null ? "bg-blue-700 text-white" : "text-gray-900 text-white hover:bg-gray-100 hover:bg-gray-700"}`}>
+            
+				<button onClick={() => setActiveForm(null)} className="flex flex-row ml-5" > <ChartPie className="w-7 h-7  text-primary"/><div className="text-xl ml-2">Dashboard</div>
+        </button>                                  
 				</div>
+
+        */}
+
+        
         
         <div className={`flex flex-col  p-4 text-base font-normal rounded-lg 
           ${activeForm === "loanApproval" ? "bg-blue-700 text-white" : "text-gray-900 text-white hover:bg-gray-100 hover:bg-gray-700"}`}>
@@ -74,7 +80,7 @@ const AdminDashboard = () => {
 
         <div className={`flex flex-col  p-4 text-base font-normal rounded-lg 
           ${activeForm === "depositManagement" ? "bg-blue-700 text-white" : "text-gray-900 text-white hover:bg-gray-100 hover:bg-gray-700"}`}>
-				<button onClick={() => setActiveForm("depositManagement")} className="flex flex-row ml-5"> <PiggyBank  className="w-7 h-7  text-primary"/><div className="text-xl ml-2">deposit Money</div>
+				<button onClick={() => setActiveForm("depositManagement")} className="flex flex-row ml-5"> <PiggyBank  className="w-7 h-7  text-primary"/><div className="text-xl ml-2">Deposit Money</div>
         </button> 
 				</div>
 

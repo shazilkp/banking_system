@@ -1,7 +1,7 @@
 
 "use client";
 import { useState, useRef ,useEffect} from "react";
-import { ChartPie, UserRoundPlus, Landmark ,IndianRupee, HandCoins, PiggyBank, WalletMinimal, History, Ticket, User, Send, ReceiptIcon, ReceiptText,ClipboardList, UserCheck, UserX, Clock, AlertCircle,CheckCircle2,XCircle} from 'lucide-react';
+import { ChartPie, UserRoundPlus, Landmark ,IndianRupee, HandCoins, PiggyBank, WalletMinimal, History, Ticket, User, Send, ReceiptIcon, ReceiptText,ClipboardList, UserCheck, UserX, Clock, AlertCircle,CheckCircle2,XCircle,LogOut} from 'lucide-react';
 import { BanknotesIcon, ArrowDownIcon } from "@heroicons/react/24/outline";
 
 
@@ -40,6 +40,21 @@ const AdminDashboard = () => {
     console.log(userId);
 
   },[userId])
+
+  const handleSignOut = async () => {
+    try {
+      await fetch("/api/logout", {
+        method: "POST",
+        credentials: "include", // Send cookie
+      });
+  
+      // Optional: clear any client-side state here
+      window.location.href = "/login"; // or use router.push('/login')
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+    console.log("Signed out");
+  };
 
   return (
       <div className="flex h-screen bg-gray-100 overflow-hidden">
@@ -89,12 +104,21 @@ const AdminDashboard = () => {
         </button> 
 				</div>
 
+        <div className="mt-6">
+          <div className="flex flex-col p-4 text-base font-normal rounded-lg  hover:bg-blue-700 text-white">
+            <button onClick={handleSignOut} className="flex flex-row ml-5">
+              <LogOut className="w-7 h-7 text-primary" />
+              <div className="text-xl ml-2">Sign Out</div>
+            </button>
+          </div>
+        </div>
+
       </aside>
 
       {/* Main Content */}
       <main className="flex-1 bg-white overflow-hidden">
    {/*  {activeForm === null && <AdminOverview />}*/}
-    {activeForm === "loanApproval" || activeForm === null && <LoanApprovalModule setActiveForm={setActiveForm} adminId={userId}/>}
+    {(activeForm === "loanApproval" || activeForm === null) && <LoanApprovalModule setActiveForm={setActiveForm} adminId={userId}/>}
     {activeForm === "accountApproval" && <AccountApprovalModule setActiveForm={setActiveForm} adminId={userId}/>}
     {activeForm === "accountFreeze" && <AccountFreezingModule setActiveForm={setActiveForm} adminId={userId}/>}
     {activeForm === "transactionReversal" && <TransactionReversalModule setActiveForm={setActiveForm} adminId = {userId} />}

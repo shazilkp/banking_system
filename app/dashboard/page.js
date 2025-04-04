@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef,useState,useEffect } from "react";
-import { ChartPie, UserRoundPlus, Landmark ,IndianRupee, HandCoins, PiggyBank, WalletMinimal, History,Send, ReceiptIcon, ReceiptText} from 'lucide-react';
+import { ChartPie, UserRoundPlus, Landmark ,IndianRupee, HandCoins, PiggyBank, WalletMinimal, History,Send, ReceiptIcon, ReceiptText,LogOut} from 'lucide-react';
 
 
 const Dashboard = () => {
@@ -71,6 +71,22 @@ const Dashboard = () => {
     console.log(userId,userName);
   },[userId,userName])
 
+  const handleSignOut = async () => {
+    try {
+      await fetch("/api/logout", {
+        method: "POST",
+        credentials: "include", // Send cookie
+      });
+  
+      // Optional: clear any client-side state here
+      window.location.href = "/login"; // or use router.push('/login')
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+    console.log("Signed out");
+  };
+  
+
   return (
       <div className="flex h-screen bg-gray-100 overflow-hidden">
       {/* Sidebar */}
@@ -124,6 +140,16 @@ const Dashboard = () => {
 				<button onClick={() => setActiveForm("viewTransactions")} className="flex flex-row ml-5"> <History  className="w-7 h-7  text-primary"/><div className="text-xl ml-2">View Transaction History</div>
         </button> 
 				</div>
+
+        <div className="mt-6">
+          <div className="flex flex-col p-4 text-base font-normal rounded-lg  hover:bg-blue-700 text-white">
+            <button onClick={handleSignOut} className="flex flex-row ml-5">
+              <LogOut className="w-7 h-7 text-primary" />
+              <div className="text-xl ml-2">Sign Out</div>
+            </button>
+          </div>
+        </div>
+
       </aside>
 
       {/* Main Content */}
@@ -528,35 +554,57 @@ const DashboardOverview = ({ userId ,userName}) => {
           <h3 className="text-lg font-bold mb-4 text-gray-800">
             Expenses Report
           </h3>
-          <div className="h-48 flex items-center justify-center bg-indigo-50 rounded-lg">
+          <div className="h-11/12 flex items-center justify-center bg-indigo-50 rounded-lg">
             {/* Expenses chart placeholder */}
             <div className="w-full max-w-lg mx-auto p-4 h-full bg-white rounded-lg shadow relative flex items-center">
-              <button onClick={handlePrev} className="absolute left-0 px-4 py-2  rounded">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-6 h-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <div className="w-full text-center h-full">
-                {reportData.length > 0 && (
-                  <div className="flex flex-col-reverse h-full items-center">
-                    <p className="font-semibold mb-2">{reportData[currentIndex][0]}</p>
-                    <div className="flex items-end gap-2">
-                      <div className="bg-blue-500 w-10 rounded-md" style={{ height: `${reportData[currentIndex][1].income / 100}px` }}></div>
-                      <div className="bg-red-500 w-10 rounded-md" style={{ height: `${reportData[currentIndex][1].expense / 100}px` }}></div>
-                    </div>
-                    <div className="flex justify-between w-full text-xs mt-2">
-                      <span className="text-blue-500">Income: {reportData[currentIndex][1].income}</span>
-                      <span className="text-red-500">Expense: {reportData[currentIndex][1].expense}</span>
-                    </div>
-                  </div>
-                )}
+  <button onClick={handlePrev} className="absolute left-0 px-4 py-2 rounded">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-6 h-6">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+    </svg>
+  </button>
+
+  <div className="w-full text-center h-full">
+    {reportData.length > 0 && (
+      <div className="flex flex-col-reverse h-full items-center">
+        <p className="font-semibold mb-2">{reportData[currentIndex][0]}</p>
+
+        {/* Per-pair scaling */}
+        {(() => {
+          const { income, expense } = reportData[currentIndex][1];
+          const maxPairValue = Math.max(income, expense, 1); // avoid divide-by-zero
+          const maxHeight = 200;
+
+          return (
+            <>
+              <div className="flex items-end gap-2">
+                <div
+                  className="bg-blue-500 w-10 rounded-md transition-all duration-300"
+                  style={{ height: `${(income / maxPairValue) * maxHeight}px` }}
+                ></div>
+                <div
+                  className="bg-red-500 w-10 rounded-md transition-all duration-300"
+                  style={{ height: `${(expense / maxPairValue) * maxHeight}px` }}
+                ></div>
               </div>
-              <button onClick={handleNext} className="absolute right-0 px-4 py-2 rounded">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-6 h-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </div>
+              <div className="flex justify-between w-full text-xs mt-2">
+                <span className="text-blue-500">Income: {income}</span>
+                <span className="text-red-500">Expense: {expense}</span>
+              </div>
+            </>
+          );
+        })()}
+      </div>
+    )}
+  </div>
+
+  <button onClick={handleNext} className="absolute right-0 px-4 py-2 rounded">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-6 h-6">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+    </svg>
+  </button>
+</div>
+
+
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@ import { pool } from "../../../../lib/db";
 export async function GET(req, { params }) {
     try {
         
-        const { acc_no } = params;
+        const { acc_no } = await params;
         //const [transactions] = ["hello"];
 
         
@@ -11,7 +11,7 @@ export async function GET(req, { params }) {
         if (!acc_no) {
             return Response.json({ error: "Account number is required" }, { status: 400 });
         }
-        console.log(acc_no);
+        console.log("heelo undef",acc_no);
 
 
 

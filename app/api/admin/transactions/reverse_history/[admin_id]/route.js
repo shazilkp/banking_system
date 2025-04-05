@@ -1,9 +1,9 @@
-import { pool } from "../../../../../lib/db";
+import { pool } from "../../../../../../lib/db";
 
 export async function GET(req, { params }) {
     const conn = await pool.getConnection(); // Get a connection
     try {
-        const { admin_id } = params;
+        const { admin_id } = await params;
 
         // Fetch reverse transactions for the given admin_id
         const [reverseTransactions] = await conn.query(

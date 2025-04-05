@@ -3,15 +3,27 @@ import { jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
 export const config = {
-    matcher: "/api/admin/:path*",
+    matcher: ["/api/admin/:path*", "/admin/:path*", "/dashboard" ,"/"], // Protects /admin and its subroutes
 };
 
 export async function middleware(request) {
     const token = cookies().get("auth_token")?.value;
+    const url = request.nextUrl.clone();
+
+    if (url.pathname === "/") {
+        url.pathname = "/dashboard";
+        return NextResponse.redirect(url);
+    }
 
     if (!token) {
-        return NextResponse.json({ error: "Unauthorized: No token provided" }, { status: 401 });
+        if (url.pathname !== "/login") {
+            url.pathname = "/login";
+            console.log("middleware activated");
+            return NextResponse.redirect(url);
+        }
+        return NextResponse.next();
     }
+
 
     try {
         // Convert secret key to Uint8Array for `jose`
@@ -20,14 +32,25 @@ export async function middleware(request) {
         // Verify token using `jose`
         const { payload } = await jwtVerify(token, secretKey);
 
-        // Restrict access to admins only
-        if (payload.role !== "admin") {
-            return NextResponse.json({ error: "Forbidden: Admins only" }, { status: 403 });
+        if (url.pathname.startsWith("/admin") || url.pathname.startsWith("/api/admin")) {
+            // Restrict access to admins only
+            if (payload.role !== "admin") {
+                return NextResponse.json({ error: "Forbidden: Admins only" }, { status: 403 });
+            }
+        }
+
+        if (url.pathname.startsWith("/dashboard")) {
+            // Restrict access to admins only
+            if (payload.role === "admin") {
+                url.pathname = "/admin";
+                return NextResponse.redirect(url);
+            }
         }
 
         return NextResponse.next();
     } catch (error) {
-        console.error("Admin Middleware error:", error);
-        return NextResponse.json({ error: "Unauthorized: Invalid token" }, { status: 401 });
+        console.error("Middleware error:", error);
+        url.pathname = "/login";
+        return NextResponse.redirect(url);
     }
 }

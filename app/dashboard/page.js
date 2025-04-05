@@ -878,6 +878,7 @@ const TakeLoanForm = ({ setActiveForm, userId }) => {
         <div className="mb-4">
           <input
             type="number"
+            min = "0"
             placeholder="Loan Amount"
             className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
             value={loanAmount}
@@ -887,6 +888,7 @@ const TakeLoanForm = ({ setActiveForm, userId }) => {
         <div className="mb-4">
           <input
         type="number"
+        min = "0"
         placeholder="Duration (months)"
         className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
         value={duration}
@@ -1042,6 +1044,7 @@ const TransferMoneyForm1 = ({ setActiveForm , userId }) => {
         <div className="mb-4">
           <input
             type="number"
+            min = "0"
             placeholder="Amount"
             className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
             value={amount}
@@ -1217,6 +1220,7 @@ const TransferMoneyForm = ({ setActiveForm, userId }) => {
         <div className="mb-4">
           <input
             type="number"
+            min = "0"
             placeholder="Amount"
             className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
             value={amount}
@@ -1348,6 +1352,7 @@ const WithdrawForm = ({ setActiveForm, userId }) => {
         <div className="mb-4">
           <input
             type="number"
+            min = "0"
             placeholder="Amount"
             className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
             value={amount}
@@ -1577,6 +1582,7 @@ const RepayLoanForm = ({ setActiveForm, userId }) => {
             <div className="mb-4">
               <input
                 type="number"
+                min = "0"
                 placeholder="Repayment Amount"
                 className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
                 value={repayAmount}

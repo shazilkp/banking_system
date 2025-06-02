@@ -30,7 +30,7 @@ This repository contains a full-stack banking system application built with Next
 
 ## Tech Stack
 
-*   **Framework:** Next.js (with React)
+*   **Framework:** Next.js (with React) [![My Skills](https://skillicons.dev/icons?i=react)](https://skillicons.dev)
 *   **Backend Logic:** Next.js API Routes
 *   **Database:** MySQL (`mysql2` driver)
 *   **Authentication:** JWT (`jose` for token verification, `jsonwebtoken` for signing, `bcryptjs` for password hashing)

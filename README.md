@@ -1,5 +1,5 @@
 # Banking System
-This repository contains a full-stack banking system application built with Next.js, created as a course project for our Database Maagement Systems course, Winter Semester 24-25. It utilizes a MySQL database for data management and JWT (JSON Web Tokens) for secure authentication. The system features role-based access control, providing separate dashboards and functionalities for regular users and administrators. The project is named "NITC Bank" within the admin interface.
+This repository contains a full-stack banking system application built with Next.js, created as a course project for our Database Management Systems course, Winter Semester 24-25. It utilizes a MySQL database for data management and JWT (JSON Web Tokens) for secure authentication. The system features role-based access control, providing separate dashboards and functionalities for regular users and administrators. The project is named "NITC Bank" within the admin interface.
 
 ## Key Features
 

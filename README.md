@@ -32,12 +32,12 @@ This repository contains a full-stack banking system application built with Next
 
 *   **Framework:** Next.js (with React) [![My Skills](https://skillicons.dev/icons?i=react)](https://skillicons.dev)
 *   **Backend Logic:** Next.js API Routes
-*   **Database:** MySQL (`mysql2` driver)
+*   **Database:** MySQL (`mysql2` driver) [![My Skills](https://skillicons.dev/icons?i=myscql)](https://skillicons.dev)
 *   **Authentication:** JWT (`jose` for token verification, `jsonwebtoken` for signing, `bcryptjs` for password hashing)
-*   **Styling:** Tailwind CSS
+*   **Styling:** Tailwind CSS [![My Skills](https://skillicons.dev/icons?i=tailwind)](https://skillicons.dev)
 *   **Data Validation:** Zod (in login/signup routes)
 *   **Unique ID Generation:** `nanoid`
-*   **Development Server:** Next.js with Turbopack
+*   **Development Server:** Next.js with Turbopack [![My Skills](https://skillicons.dev/icons?i=nextjs)](https://skillicons.dev)
 *   **Environment Management:** `dotenv`
 
 ## Prerequisites

@@ -28,7 +28,7 @@ This repository contains a full-stack banking system application built with Next
 *   MySQL database for persistent storage of user data, accounts, transactions, and loans.
 
 ## Tech Stack
-[![My Skills](https://skillicons.dev/icons?i=react,nextjs,mysql,tailwind,nextjs)](https://skillicons.dev)
+[![My Skills](https://skillicons.dev/icons?i=react,nextjs,mysql,tailwind)](https://skillicons.dev)
     
 *   **Framework:** Next.js (with React)
 *   **Backend Logic:** Next.js API Routes
